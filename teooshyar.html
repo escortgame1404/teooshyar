@@ -1,1 +1,912 @@
-.
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی چیستان</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #121212;
+            color: #e5e5e5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .screen {
+            width: 100%;
+            max-width: 500px;
+            padding: 1.5rem;
+            background-color: #1e1e1e;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .profile-card {
+            background-color: #2c2c2c;
+            border-radius: 1.5rem;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 2rem;
+        }
+
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(to right, #FFD700, #B8860B);
+            box-shadow: 0 0 20px #FFD700;
+            position: relative;
+            z-index: 10;
+        }
+
+        .profile-pic-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
+            border-radius: 50%;
+        }
+
+        .profile-pic-border {
+            position: absolute;
+            width: 110%;
+            height: 110%;
+            border-radius: 50%;
+            border: 4px solid #FFD700;
+            box-shadow: 0 0 20px #FFD700;
+            opacity: 0.5;
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+        }
+        
+        .profile-pic-inner {
+            width: 100px;
+            height: 100px;
+            background: #1e1e1e;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-pic-inner:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: #FFD700;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+            animation: half-rotate 5s infinite;
+        }
+
+        @keyframes half-rotate {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            50% { transform: translate(-50%, -50%) rotate(180deg); }
+        }
+
+        .profile-pic-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            color: #121212;
+            z-index: 100;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
+            color: #121212;
+            padding: 1rem 2rem;
+            border-radius: 9999px;
+            font-size: 1.125rem;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .answer-button {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background-color: #2c2c2c;
+            border-radius: 1.5rem;
+            text-align: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .answer-button:hover {
+            background-color: #444444;
+        }
+
+        .answer-button.correct {
+            background-color: #38a169;
+        }
+        .answer-button.incorrect {
+            background-color: #e53e3e;
+        }
+
+        .loader {
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid #FFD700; /* Gold */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 2s linear infinite;
+            margin: 2rem auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .top-icons {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+        }
+        
+        .bottom-icons {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        .icon-button {
+            background-color: #2c2c2c;
+            padding: 1rem;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+        }
+        
+        .icon-button:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Registration Screen -->
+    <div id="registration-screen" class="screen flex">
+        <h1 class="text-3xl font-bold mb-6 text-yellow-400">ثبت‌نام</h1>
+        <div class="w-full max-w-sm">
+            <input id="username-input" type="text" placeholder="نام کاربری" class="w-full p-4 mb-4 rounded-xl bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-right">
+            <input id="age-input" type="number" placeholder="سن" class="w-full p-4 mb-4 rounded-xl bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-right">
+            <div class="flex items-center mb-6">
+                <input id="terms-checkbox" type="checkbox" class="h-6 w-6 text-yellow-500 bg-gray-800 rounded-md border-gray-600 focus:ring-yellow-500">
+                <label for="terms-checkbox" class="mr-2 text-white text-sm">تمامی قوانین را می‌پذیرم</label>
+            </div>
+            <button id="register-button" class="w-full button">ورود به بازی</button>
+            <p id="error-message" class="text-red-400 mt-4 hidden">لطفا تمام فیلدها را پر کنید و قوانین را بپذیرید.</p>
+        </div>
+    </div>
+
+    <!-- Main Menu Screen -->
+    <div id="menu-screen" class="screen flex">
+        <div class="top-icons">
+            <button id="settings-button" class="icon-button">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.941 3.31.82 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.941 1.543-.82 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.941-3.31-.82-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.941-1.543.82-3.31 2.37-2.37.525.228.947.546 1.066 1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </button>
+        </div>
+        <div class="profile-card">
+            <div class="profile-pic-container">
+                <div class="profile-pic-border"></div>
+                <div class="profile-pic-inner"></div>
+                <div class="profile-pic-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.93 0 3.5 1.57 3.5 3.5S13.93 12 12 12s-3.5-1.57-3.5-3.5S10.07 5 12 5zm0 14.2c-2.7 0-5.8 1.29-7.5 2.45v-1.12c0-1.39 1.62-2.38 3.02-3.08 1.4-.7 3.2-1.15 4.48-1.15s3.08.45 4.48 1.15c1.4.7 3.02 1.69 3.02 3.08v1.12c-1.7-1.16-4.8-2.45-7.5-2.45z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="text-center">
+                <h2 id="player-username" class="text-xl font-bold"></h2>
+                <div class="flex justify-center items-center gap-4 mt-2">
+                    <p class="text-sm">امتیاز: <span id="player-score"></span></p>
+                    <p class="text-sm">سکه: <span id="player-coins"></span></p>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col gap-6 w-full mb-8">
+            <button id="single-player-button" class="button">شروع بازی</button>
+            <button id="online-game-button" class="button">بازی آنلاین</button>
+        </div>
+        <div class="bottom-icons">
+             <button class="icon-button">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                     <path d="M12 11.2c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                     <path d="M12 6.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                     <path d="M12 16.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                     <path d="M12 21.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                 </svg>
+             </button>
+             <button class="icon-button">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                    <path d="M14.5 12.5h-5v-1h5v1zm0-3h-5v-1h5v1z"/>
+                 </svg>
+             </button>
+             <button class="icon-button">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                     <path d="M12 11.2c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                     <path d="M12 6.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                     <path d="M12 16.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                     <path d="M12 21.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                 </svg>
+             </button>
+             <button class="icon-button">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                    <path d="M12 11.2c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                    <path d="M12 6.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                    <path d="M12 16.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                    <path d="M12 21.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                 </svg>
+             </button>
+         </div>
+    </div>
+
+    <!-- Settings Screen -->
+    <div id="settings-screen" class="screen">
+        <h1 class="text-3xl font-bold mb-8 text-yellow-400">تنظیمات</h1>
+        <div class="flex flex-col gap-4 w-full max-w-sm">
+            <button class="w-full p-4 rounded-xl bg-gray-800 text-white font-bold text-center transition-colors hover:bg-gray-700">کد هدیه</button>
+            <button class="w-full p-4 rounded-xl bg-gray-800 text-white font-bold text-center transition-colors hover:bg-gray-700">سازندگان</button>
+            <button class="w-full p-4 rounded-xl bg-gray-800 text-white font-bold text-center transition-colors hover:bg-gray-700">پشتیبانی</button>
+        </div>
+        <button id="back-to-menu-from-settings" class="mt-8 button">بازگشت</button>
+    </div>
+
+    <!-- Single Player Game Screen -->
+    <div id="single-player-screen" class="screen">
+        <h1 class="text-3xl font-bold mb-4 text-yellow-400">بازی تک‌نفره</h1>
+        <div class="text-center w-full">
+            <p class="text-lg mb-2">مرحله: <span id="sp-level" class="font-bold"></span></p>
+            <div id="sp-question-box" class="bg-gray-800 p-6 rounded-xl mb-4 h-40 flex items-center justify-center text-lg font-bold"></div>
+            <div id="sp-options-container" class="flex flex-col gap-2"></div>
+            <p id="sp-result" class="mt-4 font-bold"></p>
+        </div>
+    </div>
+
+    <!-- Online Game Lobby Screen -->
+    <div id="online-lobby-screen" class="screen">
+        <div id="searching-state">
+            <h1 class="text-3xl font-bold mb-4 text-yellow-400">جستجوی بازیکن...</h1>
+            <div class="loader"></div>
+        </div>
+        <div id="opponent-found-state" class="hidden fade-in">
+            <h1 class="text-3xl font-bold mb-8 text-yellow-400">بازیکن پیدا شد!</h1>
+            <div class="profile-card w-full mb-8">
+                <div id="opponent-profile-pic" class="profile-pic"></div>
+                <div class="text-right flex-1">
+                    <p class="text-lg font-bold">حریف: <span id="opponent-name"></span></p>
+                    <p class="text-sm">کاپ‌ها: <span id="opponent-cups"></span></p>
+                </div>
+            </div>
+            <button id="start-online-match" class="button w-full">شروع مسابقه</button>
+        </div>
+    </div>
+
+    <!-- Online Game Screen -->
+    <div id="online-game-screen" class="screen">
+        <div id="round-intro-screen" class="hidden fade-in">
+            <h1 class="text-3xl font-bold mb-4 text-yellow-400">راند جدید</h1>
+            <p class="text-xl">موضوع: <span id="round-topic-intro" class="font-bold"></span></p>
+            <p class="text-xl mt-4">شروع در <span id="round-countdown" class="font-bold text-yellow-400"></span> ثانیه</p>
+        </div>
+        <div id="game-play-screen" class="hidden">
+            <div class="w-full flex justify-between items-center mb-4">
+                <div class="text-sm">راند <span id="current-round"></span> / ۳</div>
+                <div class="text-sm">زمان: <span id="round-timer" class="font-bold">40</span> ثانیه</div>
+            </div>
+            <div class="w-full flex justify-between items-center mb-4">
+                <div class="text-right text-sm">شما: <span id="player-online-score" class="font-bold">0</span></div>
+                <div class="text-sm">زمان سوال: <span id="question-timer" class="font-bold">10</span></div>
+                <div class="text-left text-sm">حریف: <span id="bot-online-score" class="font-bold">0</span></div>
+            </div>
+            <div id="online-question-box" class="bg-gray-800 p-6 rounded-xl mb-4 h-40 flex items-center justify-center text-lg font-bold"></div>
+            <div id="online-options-container" class="flex flex-col gap-2"></div>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="game-over-screen" class="screen">
+        <h1 class="text-3xl font-bold mb-4 text-yellow-400">پایان بازی</h1>
+        <div id="winner-display" class="mb-6"></div>
+        <div class="w-full max-w-sm mb-6 bg-gray-800 p-4 rounded-xl">
+            <div class="flex justify-between items-center text-lg font-bold">
+                <span>شما</span>
+                <span>درست: <span id="player-correct">0</span></span>
+                <span>غلط: <span id="player-incorrect">0</span></span>
+            </div>
+            <div class="flex justify-between items-center text-lg font-bold mt-2">
+                <span id="bot-name-result"></span>
+                <span>درست: <span id="bot-correct">0</span></span>
+                <span>غلط: <span id="bot-incorrect">0</span></span>
+            </div>
+        </div>
+        <button id="back-to-menu-from-end" class="button">بازگشت به منو</button>
+    </div>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center p-4">
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg w-full max-w-sm text-center">
+            <p id="modal-message" class="text-lg mb-4"></p>
+            <button id="modal-ok-button" class="button w-full">باشه</button>
+        </div>
+    </div>
+
+<script>
+    // Global state variables
+    let currentPlayer = { username: '', age: 0, cups: 0 };
+    let botOpponent = {};
+    let onlineGameData = {
+        playerCorrect: 0,
+        playerIncorrect: 0,
+        botCorrect: 0,
+        botIncorrect: 0,
+        round: 1
+    };
+    let questionTimer, roundTimer;
+    let currentQuestionIndex = 0;
+    let singlePlayerLevel = 1;
+
+    // UI elements
+    const registrationScreen = document.getElementById('registration-screen');
+    const menuScreen = document.getElementById('menu-screen');
+    const settingsScreen = document.getElementById('settings-screen');
+    const singlePlayerScreen = document.getElementById('single-player-screen');
+    const onlineLobbyScreen = document.getElementById('online-lobby-screen');
+    const onlineGameScreen = document.getElementById('online-game-screen');
+    const gameOverScreen = document.getElementById('game-over-screen');
+
+    const usernameInput = document.getElementById('username-input');
+    const ageInput = document.getElementById('age-input');
+    const termsCheckbox = document.getElementById('terms-checkbox');
+    const registerButton = document.getElementById('register-button');
+    const errorMessage = document.getElementById('error-message');
+
+    const playerUsernameElem = document.getElementById('player-username');
+    const playerScoreElem = document.getElementById('player-score');
+    const playerCoinsElem = document.getElementById('player-coins');
+    const settingsButton = document.getElementById('settings-button');
+    const onlineGameButton = document.getElementById('online-game-button');
+    const singlePlayerButton = document.getElementById('single-player-button');
+    const backToMenuFromSettings = document.getElementById('back-to-menu-from-settings');
+
+    const spLevelElem = document.getElementById('sp-level');
+    const spQuestionBox = document.getElementById('sp-question-box');
+    const spOptionsContainer = document.getElementById('sp-options-container');
+    const spResultElem = document.getElementById('sp-result');
+
+    const searchingState = document.getElementById('searching-state');
+    const opponentFoundState = document.getElementById('opponent-found-state');
+    const opponentNameElem = document.getElementById('opponent-name');
+    const opponentCupsElem = document.getElementById('opponent-cups');
+    const startOnlineMatchButton = document.getElementById('start-online-match');
+
+    const roundIntroScreen = document.getElementById('round-intro-screen');
+    const gamePlayScreen = document.getElementById('game-play-screen');
+    const roundTopicIntroElem = document.getElementById('round-topic-intro');
+    const roundCountdownElem = document.getElementById('round-countdown');
+    const currentRoundElem = document.getElementById('current-round');
+    const roundTimerElem = document.getElementById('round-timer');
+    const questionTimerElem = document.getElementById('question-timer');
+    const playerOnlineScoreElem = document.getElementById('player-online-score');
+    const botOnlineScoreElem = document.getElementById('bot-online-score');
+    const onlineQuestionBox = document.getElementById('online-question-box');
+    const onlineOptionsContainer = document.getElementById('online-options-container');
+
+    const winnerDisplayElem = document.getElementById('winner-display');
+    const playerCorrectElem = document.getElementById('player-correct');
+    const playerIncorrectElem = document.getElementById('player-incorrect');
+    const botNameResultElem = document.getElementById('bot-name-result');
+    const botCorrectElem = document.getElementById('bot-correct');
+    const botIncorrectElem = document.getElementById('bot-incorrect');
+    const backToMenuFromEnd = document.getElementById('back-to-menu-from-end');
+
+    const customModal = document.getElementById('custom-modal');
+    const modalMessage = document.getElementById('modal-message');
+    const modalOkButton = document.getElementById('modal-ok-button');
+
+    // Data for single player game
+    const singlePlayerQuestions = [
+        { q: "آن چیست که همیشه جلوی روی شماست اما نمی‌توانید آن را ببینید؟", a: "آینده" },
+        { q: "آن چیست که اگر بپوشیدش، هیچ‌چیز نمی‌بینید؟", a: "عینک" },
+        { q: "کدام کلمه است که هر چه بیشتر از آن برداری، بزرگ‌تر می‌شود؟", a: "چاله" },
+        { q: "من چه چیزی را دارم که اگر آن را از دست بدهم، از بین می‌روم؟", a: "سکوت" },
+        { q: "آن چیست که یک گوش دارد و یک شکم بزرگ؟", a: "قوری" },
+        { q: "کدام کلمه است که هر چه بیشتر از آن برداری، سبک‌تر می‌شود؟", a: "ابر" },
+        { q: "آن چیست که پا ندارد اما راه می‌رود، چشم ندارد اما می‌بیند؟", a: "باد" },
+        { q: "من چه چیزی را دارم که اگر آن را از دست بدهم، به سختی نفس می‌کشم؟", a: "هوا" },
+        { q: "آن چیست که پر از سوراخ است اما آب را در خود نگه می‌دارد؟", a: "اسفنج" },
+        { q: "آن چیست که هرچه از آن می‌گیریم، بزرگ‌تر می‌شود؟", a: "سوراخ" },
+        { q: "کدام کلمه است که اگر آن را بنویسیم، از بین می‌رود؟", a: "سایه" },
+        { q: "آن چیست که فقط با یک نفر در هر زمان می‌تواند صحبت کند؟", a: "تلفن" },
+        { q: "من چه چیزی را دارم که اگر آن را از دست بدهم، دیگر هیچ‌کس مرا دوست نخواهد داشت؟", a: "خدا" },
+        { q: "آن چیست که یک چشم دارد اما نمی‌بیند؟", a: "سوزن" },
+        { q: "آن چیست که هرچه بیشتر از آن می‌خورید، لاغرتر می‌شوید؟", a: "غصه" },
+        { q: "آن چیست که همه چیز را در خود دارد، اما نمی‌توانید آن را از بین ببرید؟", a: "خواب" },
+        { q: "آن چیست که هرچه بیشتر از آن می‌گیرید، سنگین‌تر می‌شود؟", a: "سنگ" },
+        { q: "من چه چیزی را دارم که اگر آن را از دست بدهم، دیگر هیچ‌کس مرا نمی‌شناسد؟", a: "نام" },
+        { q: "آن چیست که با دو دست بلند می‌شود و با یک دست پرتاب می‌شود؟", a: "باد" },
+        { q: "آن چیست که همیشه به دنبال شماست اما نمی‌توانید آن را بگیرید؟", a: "سایه" },
+        { q: "آن چیست که اگر به آن نگاه کنید، همه چیز را می‌بینید؟", a: "آینه" },
+        { q: "آن چیست که یک دست دارد اما نمی‌تواند کاری انجام دهد؟", a: "ساعت" },
+        { q: "آن چیست که یک پا دارد اما نمی‌تواند راه برود؟", a: "کفش" },
+        { q: "آن چیست که اگر آن را به دست بیاورید، آن را از دست می‌دهید؟", a: "راز" },
+        { q: "آن چیست که به همه تعلق دارد، اما هیچ‌کس نمی‌تواند آن را داشته باشد؟", a: "زمان" },
+        { q: "آن چیست که همیشه در حال حرکت است، اما هیچ‌گاه به مقصد نمی‌رسد؟", a: "رودخانه" },
+        { q: "آن چیست که یک دهان دارد اما نمی‌خورد؟", a: "قلم" },
+        { q: "آن چیست که همیشه در حال رشد است، اما هیچ‌گاه بزرگ نمی‌شود؟", a: "دروغ" },
+        { q: "آن چیست که هرچه بیشتر از آن می‌گیرید، بیشتر می‌شود؟", a: "سنگ" },
+        { q: "آن چیست که یک پا دارد اما نمی‌تواند راه برود؟", a: "کفش" },
+        { q: "آن چیست که اگر به آن نگاه کنید، همه چیز را می‌بینید؟", a: "آینه" },
+        { q: "آن چیست که یک دست دارد اما نمی‌تواند کاری انجام دهد؟", a: "ساعت" },
+        { q: "آن چیست که یک چشم دارد اما نمی‌بیند؟", a: "سوزن" },
+        { q: "آن چیست که هرچه بیشتر از آن می‌خورید، لاغرتر می‌شوید؟", a: "غصه" },
+        { q: "آن چیست که همه چیز را در خود دارد، اما نمی‌توانید آن را از بین ببرید؟", a: "خواب" },
+        { q: "آن چیست که هرچه بیشتر از آن می‌گیرید، بیشتر می‌شود؟", a: "سنگ" },
+        { q: "آن چیست که یک پا دارد اما نمی‌تواند راه برود؟", a: "کفش" },
+        { q: "آن چیست که اگر به آن نگاه کنید، همه چیز را می‌بینید؟", a: "آینه" },
+        { q: "آن چیست که یک دست دارد اما نمی‌تواند کاری انجام دهد؟", a: "ساعت" },
+        { q: "آن چیست که یک چشم دارد اما نمی‌بیند؟", a: "سوزن" },
+        { q: "آن چیست که هرچه بیشتر از آن می‌خورید، لاغرتر می‌شوید؟", a: "غصه" },
+        { q: "آن چیست که همه چیز را در خود دارد، اما نمی‌توانید آن را از بین ببرید؟", a: "خواب" },
+        { q: "آن چیست که هرچه بیشتر از آن می‌گیرید، بیشتر می‌شود؟", a: "سنگ" },
+        { q: "آن چیست که یک پا دارد اما نمی‌تواند راه برود؟", a: "کفش" },
+        { q: "آن چیست که اگر به آن نگاه کنید، همه چیز را می‌بینید؟", a: "آینه" },
+        { q: "آن چیست که یک دست دارد اما نمی‌تواند کاری انجام دهد؟", a: "ساعت" },
+        { q: "آن چیست که یک چشم دارد اما نمی‌بیند؟", a: "سوزن" },
+        { q: "آن چیست که هرچه بیشتر از آن می‌خورید، لاغرتر می‌شوید؟", a: "غصه" },
+        { q: "آن چیست که همه چیز را در خود دارد، اما نمی‌توانید آن را از بین ببرید؟", a: "خواب" },
+        { q: "آن چیست که هرچه بیشتر از آن می‌گیرید، بیشتر می‌شود؟", a: "سنگ" },
+        { q: "آن چیست که یک پا دارد اما نمی‌تواند راه برود؟", a: "کفش" },
+        { q: "آن چیست که اگر به آن نگاه کنید، همه چیز را می‌بینید؟", a: "آینه" },
+        { q: "آن چیست که یک دست دارد اما نمی‌تواند کاری انجام دهد؟", a: "ساعت" },
+        { q: "آن چیست که یک چشم دارد اما نمی‌بیند؟", a: "سوزن" },
+        { q: "آن چیست که هرچه بیشتر از آن می‌خورید، لاغرتر می‌شوید؟", a: "غصه" },
+        { q: "آن چیست که همه چیز را در خود دارد، اما نمی‌توانید آن را از بین ببرید؟", a: "خواب" },
+        { q: "آن چیست که هرچه بیشتر از آن می‌گیرید، بیشتر می‌شود؟", a: "سنگ" },
+        { q: "آن چیست که یک پا دارد اما نمی‌تواند راه برود؟", a: "کفش" },
+        { q: "آن چیست که اگر به آن نگاه کنید، همه چیز را می‌بینید؟", a: "آینه" },
+        { q: "آن چیست که یک دست دارد اما نمی‌تواند کاری انجام دهد؟", a: "ساعت" },
+        { q: "آن چیست که یک چشم دارد اما نمی‌بیند؟", a: "سوزن" },
+        { q: "آن چیست که هرچه بیشتر از آن می‌خورید، لاغرتر می‌شوید؟", a: "غصه" },
+        { q: "آن چیست که همه چیز را در خود دارد، اما نمی‌توانید آن را از بین ببرید؟", a: "خواب" },
+        { q: "آن چیست که هرچه بیشتر از آن می‌گیرید، بیشتر می‌شود؟", a: "سنگ" },
+        { q: "آن چیست که یک پا دارد اما نمی‌تواند راه برود؟", a: "کفش" },
+        { q: "آن چیست که اگر به آن نگاه کنید، همه چیز را می‌بینید؟", a: "آینه" },
+        { q: "آن چیست که یک دست دارد اما نمی‌تواند کاری انجام دهد؟", a: "ساعت" },
+        { q: "آن چیست که یک چشم دارد اما نمی‌بیند؟", a: "سوزن" },
+        { q: "آن چیست که هرچه بیشتر از آن می‌خورید، لاغرتر می‌شوید؟", a: "غصه" },
+        { q: "آن چیست که همه چیز را در خود دارد، اما نمی‌توانید آن را از بین ببرید؟", a: "خواب" },
+    ].slice(0, 70);
+
+    // Data for online game
+    const gameTopics = [
+        {
+            title: "اطلاعات عمومی",
+            questions: [
+                { q: "کدام حیوان بزرگترین چشم را در جهان دارد؟", options: ["نهنگ آبی", "فیل", "ماهی مرکب غول پیکر", "زرافه"], a: "ماهی مرکب غول پیکر" },
+                { q: "پایتخت کانادا کجاست؟", options: ["تورنتو", "ونکوور", "مونترآل", "اتاوا"], a: "اتاوا" },
+                { q: "سریع‌ترین حیوان خشکی کدام است؟", options: ["یوزپلنگ", "شیر", "ببر", "کوالا"], a: "یوزپلنگ" }
+            ]
+        },
+        {
+            title: "سینما",
+            questions: [
+                { q: "چه کسی نقش نئو را در فیلم ماتریکس بازی کرد؟", options: ["برد پیت", "کیانو ریوز", "تام هنکس", "لئوناردو دی‌کاپریو"], a: "کیانو ریوز" },
+                { q: "نام کشتی در فیلم تایتانیک چیست؟", options: ["المپیک", "کویین مری", "بریطانیا", "تایتانیک"], a: "تایتانیک" },
+                { q: "چه کسی فیلم تلقین (Inception) را کارگردانی کرد؟", options: ["کریستوفر نولان", "مارتین اسکورسیزی", "استیون اسپیلبرگ", "کوئنتین تارانتینو"], a: "کریستوفر نولان" }
+            ]
+        },
+        {
+            title: "تاریخ",
+            questions: [
+                { q: "کدام امپراتوری دیوار بزرگ چین را بنا کرد؟", options: ["هان", "مینگ", "چین", "تانگ"], a: "چین" },
+                { q: "چه کسی به عنوان اولین رئیس‌جمهور آمریکا شناخته می‌شود؟", options: ["آبراهام لینکلن", "بنجامین فرانکلین", "جرج واشینگتن", "توماس جفرسون"], a: "جرج واشینگتن" },
+                { q: "انقلاب صنعتی در کدام کشور آغاز شد؟", options: ["آمریکا", "فرانسه", "انگلیس", "آلمان"], a: "انگلیس" }
+            ]
+        },
+        {
+            title: "ورزش",
+            questions: [
+                { q: "بیشترین تعداد مدال طلای المپیک را کدام شناگر مرد کسب کرده است؟", options: ["رایان لاکتی", "مارک اسپیتز", "مایکل فلپس", "یان تورپ"], a: "مایکل فلپس" },
+                { q: "چند بازیکن در یک تیم فوتبال آمریکایی هستند؟", options: ["۱۰", "۱۱", "۱۲", "۱۵"], a: "۱۱" },
+                { q: "ورزش اصلی که در ویمبلدون بازی می‌شود چیست؟", options: ["تنیس", "کریکت", "بدمینتون", "گلف"], a: "تنیس" }
+            ]
+        },
+        {
+            title: "علم و تکنولوژی",
+            questions: [
+                { q: "کدام سیاره به عنوان 'سیاره سرخ' شناخته می‌شود؟", options: ["مریخ", "ونوس", "اورانوس", "مشتری"], a: "مریخ" },
+                { q: "کدام عنصر شیمیایی نماد Fe را دارد؟", options: ["طلا", "نقره", "آهن", "مس"], a: "آهن" },
+                { q: "واحد پایه اندازه‌گیری جریان الکتریکی چیست؟", options: ["ولت", "وات", "آمپر", "اهم"], a: "آمپر" }
+            ]
+        }
+    ];
+
+    const botNames = ["a_p_12", "Alixc", "فاطمه", "ممد", "سارا", "کامیار", "نازنین", "سینا", "امیر"];
+
+    // Utility functions
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(screen => {
+            screen.style.display = 'none';
+        });
+        document.getElementById(screenId).style.display = 'flex';
+    }
+
+    function showModal(message) {
+        modalMessage.textContent = message;
+        customModal.style.display = 'flex';
+    }
+
+    // Event listeners
+    registerButton.addEventListener('click', () => {
+        const username = usernameInput.value.trim();
+        const age = ageInput.value.trim();
+        if (username === '' || age === '' || !termsCheckbox.checked) {
+            errorMessage.style.display = 'block';
+        } else {
+            errorMessage.style.display = 'none';
+            currentPlayer.username = username;
+            currentPlayer.age = age;
+            currentPlayer.score = 0; // New: score
+            currentPlayer.coins = 0; // New: coins
+            localStorage.setItem('playerData', JSON.stringify(currentPlayer));
+            updateProfileUI();
+            showScreen('menu-screen');
+        }
+    });
+
+    settingsButton.addEventListener('click', () => {
+        showScreen('settings-screen');
+    });
+
+    backToMenuFromSettings.addEventListener('click', () => {
+        showScreen('menu-screen');
+    });
+
+    singlePlayerButton.addEventListener('click', () => {
+        singlePlayerLevel = 1;
+        startSinglePlayerGame();
+    });
+
+    onlineGameButton.addEventListener('click', () => {
+        showScreen('online-lobby-screen');
+        searchingState.classList.remove('hidden');
+        opponentFoundState.classList.add('hidden');
+        setTimeout(findOpponent, 2000); // Simulate search time
+    });
+
+    startOnlineMatchButton.addEventListener('click', startOnlineGame);
+
+    backToMenuFromEnd.addEventListener('click', () => {
+        showScreen('menu-screen');
+        updateProfileUI(); // Update cups after game ends
+    });
+
+    modalOkButton.addEventListener('click', () => {
+        customModal.style.display = 'none';
+    });
+
+    // Game functions
+    function updateProfileUI() {
+        const storedData = localStorage.getItem('playerData');
+        if (storedData) {
+            currentPlayer = JSON.parse(storedData);
+            playerUsernameElem.textContent = currentPlayer.username;
+            playerScoreElem.textContent = currentPlayer.score;
+            playerCoinsElem.textContent = currentPlayer.coins;
+        }
+    }
+
+    function startSinglePlayerGame() {
+        if (singlePlayerLevel > singlePlayerQuestions.length) {
+            showModal("شما تمام مراحل بازی تک‌نفره را به پایان رساندید. تبریک!");
+            showScreen('menu-screen');
+            return;
+        }
+        spLevelElem.textContent = singlePlayerLevel;
+        const question = singlePlayerQuestions[singlePlayerLevel - 1];
+        spQuestionBox.textContent = question.q;
+        spOptionsContainer.innerHTML = '';
+        spResultElem.textContent = '';
+
+        const answer = question.a;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = 'جواب خود را بنویسید';
+        input.className = 'w-full p-4 rounded-xl bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-center';
+
+        const submitButton = document.createElement('button');
+        submitButton.textContent = 'تایید';
+        submitButton.className = 'w-full mt-4 button';
+
+        submitButton.addEventListener('click', () => {
+            if (input.value.trim() === answer) {
+                spResultElem.textContent = "پاسخ صحیح بود! به مرحله بعد بروید.";
+                spResultElem.style.color = '#38a169';
+                singlePlayerLevel++;
+                setTimeout(startSinglePlayerGame, 1500);
+            } else {
+                spResultElem.textContent = "پاسخ اشتباه بود. دوباره امتحان کنید.";
+                spResultElem.style.color = '#e53e3e';
+            }
+        });
+
+        spOptionsContainer.appendChild(input);
+        spOptionsContainer.appendChild(submitButton);
+
+        showScreen('single-player-screen');
+    }
+
+    function findOpponent() {
+        const randomName = botNames[Math.floor(Math.random() * botNames.length)];
+        const opponentCups = currentPlayer.cups; // Reusing cups for the new score
+        botOpponent = { name: randomName, cups: opponentCups };
+
+        searchingState.classList.add('hidden');
+        opponentFoundState.classList.remove('hidden');
+        opponentNameElem.textContent = botOpponent.name;
+        opponentCupsElem.textContent = botOpponent.cups;
+    }
+
+    function startOnlineGame() {
+        showScreen('online-game-screen');
+        roundIntroScreen.classList.remove('hidden');
+        gamePlayScreen.classList.add('hidden');
+        onlineGameData = { playerCorrect: 0, playerIncorrect: 0, botCorrect: 0, botIncorrect: 0, round: 1 };
+        startRound();
+    }
+
+    function startRound() {
+        if (onlineGameData.round > 3) {
+            endOnlineGame();
+            return;
+        }
+
+        const roundTopics = shuffleArray([...gameTopics]);
+        const currentTopic = roundTopics[onlineGameData.round - 1];
+        onlineGameData.currentTopic = currentTopic;
+        
+        roundTopicIntroElem.textContent = currentTopic.title;
+        roundIntroScreen.classList.remove('hidden');
+        gamePlayScreen.classList.add('hidden');
+        
+        let countdown = 10;
+        roundCountdownElem.textContent = countdown;
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            roundCountdownElem.textContent = countdown;
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                startGameplay();
+            }
+        }, 1000);
+    }
+
+    function startGameplay() {
+        roundIntroScreen.classList.add('hidden');
+        gamePlayScreen.classList.remove('hidden');
+        currentRoundElem.textContent = onlineGameData.round;
+        playerOnlineScoreElem.textContent = onlineGameData.playerCorrect;
+        botOnlineScoreElem.textContent = onlineGameData.botCorrect;
+
+        let roundTime = 40;
+        roundTimerElem.textContent = roundTime;
+        roundTimer = setInterval(() => {
+            roundTime--;
+            roundTimerElem.textContent = roundTime;
+            if (roundTime <= 0) {
+                clearInterval(roundTimer);
+                clearInterval(questionTimer);
+                onlineGameData.round++;
+                startRound();
+            }
+        }, 1000);
+        
+        const questions = shuffleArray([...onlineGameData.currentTopic.questions]);
+        currentQuestionIndex = 0;
+        displayNextQuestion(questions);
+    }
+
+    function displayNextQuestion(questions) {
+        if (currentQuestionIndex >= questions.length) {
+             clearInterval(questionTimer);
+             clearInterval(roundTimer);
+             onlineGameData.round++;
+             startRound();
+             return;
+        }
+        
+        const questionData = questions[currentQuestionIndex];
+        onlineQuestionBox.textContent = questionData.q;
+        onlineOptionsContainer.innerHTML = '';
+        const shuffledOptions = shuffleArray([...questionData.options]);
+
+        shuffledOptions.forEach(option => {
+            const button = document.createElement('button');
+            button.textContent = option;
+            button.className = 'answer-button';
+            button.addEventListener('click', () => {
+                checkOnlineAnswer(option, questionData.a, shuffledOptions, button);
+            });
+            onlineOptionsContainer.appendChild(button);
+        });
+
+        setTimeout(() => {
+            simulateBotAnswer(questionData.a, shuffledOptions);
+        }, Math.random() * 4000 + 3000);
+
+        let qTime = 10;
+        questionTimerElem.textContent = qTime;
+        clearInterval(questionTimer);
+        questionTimer = setInterval(() => {
+            qTime--;
+            questionTimerElem.textContent = qTime;
+            if (qTime <= 0) {
+                onlineGameData.playerIncorrect++;
+                playerOnlineScoreElem.textContent = onlineGameData.playerCorrect;
+                currentQuestionIndex++;
+                displayNextQuestion(questions);
+            }
+        }, 1000);
+    }
+
+    function checkOnlineAnswer(selectedOption, correctAnswer, allOptions, button) {
+        clearInterval(questionTimer);
+        if (selectedOption === correctAnswer) {
+            onlineGameData.playerCorrect++;
+            button.classList.add('correct');
+        } else {
+            onlineGameData.playerIncorrect++;
+            button.classList.add('incorrect');
+            document.querySelectorAll('.answer-button').forEach(btn => {
+                if (btn.textContent === correctAnswer) {
+                    btn.classList.add('correct');
+                }
+            });
+        }
+        playerOnlineScoreElem.textContent = onlineGameData.playerCorrect;
+        
+        setTimeout(() => {
+            currentQuestionIndex++;
+            displayNextQuestion(onlineGameData.currentTopic.questions);
+        }, 1500);
+    }
+
+    function simulateBotAnswer(correctAnswer, allOptions) {
+        const willAnswer = Math.random() < 0.8;
+        if (!willAnswer) return;
+
+        const isCorrect = Math.random() < 0.7;
+        let botAnswer;
+        if (isCorrect) {
+            botAnswer = correctAnswer;
+            onlineGameData.botCorrect++;
+        } else {
+            const incorrectOptions = allOptions.filter(opt => opt !== correctAnswer);
+            botAnswer = incorrectOptions[Math.floor(Math.random() * incorrectOptions.length)];
+            onlineGameData.botIncorrect++;
+        }
+        
+        botOnlineScoreElem.textContent = onlineGameData.botCorrect;
+        const botButton = [...document.querySelectorAll('.answer-button')].find(btn => btn.textContent === botAnswer);
+        if (botButton) {
+            botButton.classList.add(isCorrect ? 'correct' : 'incorrect');
+        }
+    }
+
+    function endOnlineGame() {
+        clearInterval(questionTimer);
+        clearInterval(roundTimer);
+        showScreen('game-over-screen');
+
+        playerCorrectElem.textContent = onlineGameData.playerCorrect;
+        playerIncorrectElem.textContent = onlineGameData.playerIncorrect;
+        botCorrectElem.textContent = onlineGameData.botCorrect;
+        botIncorrectElem.textContent = onlineGameData.botIncorrect;
+        botNameResultElem.textContent = botOpponent.name;
+
+        if (onlineGameData.playerCorrect > onlineGameData.botCorrect) {
+            winnerDisplayElem.textContent = "شما برنده شدید!";
+            winnerDisplayElem.className = "text-green-400 text-2xl font-bold";
+            currentPlayer.cups += 100;
+            localStorage.setItem('playerData', JSON.stringify(currentPlayer));
+        } else if (onlineGameData.botCorrect > onlineGameData.playerCorrect) {
+            winnerDisplayElem.textContent = "شما باختید!";
+            winnerDisplayElem.className = "text-red-400 text-2xl font-bold";
+        } else {
+            winnerDisplayElem.textContent = "بازی مساوی شد!";
+            winnerDisplayElem.className = "text-yellow-400 text-2xl font-bold";
+        }
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Initialize
+    window.onload = () => {
+        const storedData = localStorage.getItem('playerData');
+        if (storedData) {
+            showScreen('menu-screen');
+            updateProfileUI();
+        } else {
+            showScreen('registration-screen');
+        }
+    };
+</script>
+
+</body>
+</html>
