@@ -88,7 +88,7 @@
 <div id="app" class="w-full max-w-sm mx-auto flex flex-col items-center"></div>
 
 <script>
-    // داده‌های بازی
+    // Game data and state management
     const gameData = {
         user: { name: '', age: 0, cups: 0 },
         botNames: ["فاطمه حسینی", "مهتاب جلالی", "Alixc", "a_p_12", "Aria_P24", "MinaK", "Laleh98", "نیما رحیمی", "نرگس راد", "RoyaG"],
@@ -142,10 +142,10 @@
         }
     };
 
-    // تابع اصلی رندر
+    // The main render function
     function renderScreen() {
         const app = document.getElementById('app');
-        app.innerHTML = ''; // پاک کردن محتوای قبلی
+        app.innerHTML = '';
         switch (gameData.game.screen) {
             case 'onboarding':
                 renderOnboarding();
@@ -171,7 +171,7 @@
         }
     }
 
-    // صفحات
+    // Onboarding screen
     function renderOnboarding() {
         const app = document.getElementById('app');
         app.innerHTML = `
@@ -206,28 +206,33 @@
         });
     }
 
+    // Main menu screen
     function renderMainMenu() {
         const app = document.getElementById('app');
         app.innerHTML = `
-            <div class="w-full h-full flex flex-col items-center justify-between">
+            <div class="w-full flex flex-col h-full">
                 <!-- Top Bar -->
                 <div class="flex justify-between items-center w-full px-4 py-6">
-                    <div class="flex items-center space-x-2 space-x-reverse">
-                        <div class="split-circle-profile">
-                            <span class="profile-text-top text-xs">${gameData.user.name.split(' ')[0]}</span>
-                            <span class="profile-text-bottom text-xs">${gameData.user.cups} کاپ</span>
-                        </div>
-                    </div>
                     <div id="settings-btn" class="p-2 cursor-pointer transition-transform duration-200 hover:rotate-45">
                         <svg class="h-8 w-8 text-golden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.82 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.82 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.82-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.82-3.31 2.37-2.37.525.265 1.127.398 1.729.398h.001z" />
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                     </div>
+                    <div class="flex items-center space-x-2 space-x-reverse">
+                        <div class="flex flex-col items-end">
+                            <span class="text-sm font-bold">${gameData.user.name}</span>
+                            <span class="text-xs text-golden">${gameData.user.cups} کاپ</span>
+                        </div>
+                        <div class="split-circle-profile">
+                            <span class="profile-text-top text-xs">${gameData.user.name.split(' ')[0]}</span>
+                            <span class="profile-text-bottom text-xs">${gameData.user.cups} کاپ</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Main Buttons -->
-                <div class="flex flex-col space-y-6 w-full items-center">
+                <div class="flex flex-col space-y-6 w-full items-center mt-20">
                     <button id="online-btn" class="button w-3/4 text-xl bg-[#2e2e2e] text-golden golden-glow">
                         بازی آنلاین
                     </button>
@@ -235,27 +240,27 @@
                         شروع بازی
                     </button>
                 </div>
+            </div>
 
-                <!-- Bottom Navbar -->
-                <div class="flex justify-around w-full bg-[#1a1a1a] rounded-t-2xl p-4">
-                    <div id="store-btn" class="flex flex-col items-center cursor-pointer">
-                        <svg class="w-6 h-6 text-golden navbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.183 1.727.707 1.727H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        <span class="text-xs mt-1 text-gray-400">فروشگاه</span>
-                    </div>
-                    <div id="challenges-btn" class="flex flex-col items-center cursor-pointer">
-                        <svg class="w-6 h-6 text-golden navbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M10 16h.01" />
-                        </svg>
-                        <span class="text-xs mt-1 text-gray-400">چالش‌ها</span>
-                    </div>
-                    <div id="history-btn" class="flex flex-col items-center cursor-pointer">
-                        <svg class="w-6 h-6 text-golden navbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-xs mt-1 text-gray-400">تاریخچه</span>
-                    </div>
+            <!-- Bottom Navbar -->
+            <div class="fixed bottom-0 right-0 w-full flex justify-around bg-[#1a1a1a] rounded-t-2xl p-4">
+                <div id="store-btn" class="flex flex-col items-center cursor-pointer">
+                    <svg class="w-6 h-6 text-golden navbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.183 1.727.707 1.727H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span class="text-xs mt-1 text-gray-400">فروشگاه</span>
+                </div>
+                <div id="challenges-btn" class="flex flex-col items-center cursor-pointer">
+                    <svg class="w-6 h-6 text-golden navbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M10 16h.01" />
+                    </svg>
+                    <span class="text-xs mt-1 text-gray-400">چالش‌ها</span>
+                </div>
+                <div id="history-btn" class="flex flex-col items-center cursor-pointer">
+                    <svg class="w-6 h-6 text-golden navbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-xs mt-1 text-gray-400">تاریخچه</span>
                 </div>
             </div>
         `;
@@ -289,6 +294,7 @@
         });
     }
 
+    // Searching for online opponent screen
     function renderOnlineSearching() {
         const app = document.getElementById('app');
         app.innerHTML = `
@@ -305,15 +311,16 @@
             const randomBotName = gameData.botNames[Math.floor(Math.random() * gameData.botNames.length)];
             gameData.game.bot = { name: randomBotName, cups: Math.floor(Math.random() * 1000) };
             renderScreen();
-        }, 3000); // Wait 3 seconds to find a bot
+        }, 3000);
     }
 
+    // Game screen with rounds
     function renderGame() {
         const app = document.getElementById('app');
-        const topic = gameData.game.currentTopic;
+        const topic = gameData.topics[gameData.game.currentRound];
         const question = gameData.game.currentQuestion;
         app.innerHTML = `
-            <div id="game-container" class="w-full flex flex-col h-full">
+            <div class="w-full flex flex-col h-full">
                 <!-- Top Bar -->
                 <div class="flex justify-between items-center w-full p-4 mb-4">
                     <div class="flex flex-col items-center">
@@ -327,14 +334,14 @@
                     </div>
                 </div>
 
-                <!-- Round Topic & Countdown -->
+                <!-- Round Introduction and Countdown -->
                 <div id="round-intro" class="flex flex-col items-center justify-center h-full absolute inset-0 bg-black bg-opacity-80 z-20 transition-opacity duration-500">
                     <h2 class="text-2xl font-bold text-white mb-4">موضوع: ${topic}</h2>
                     <p class="text-lg text-gray-400">شروع بازی در...</p>
                     <p id="interval-countdown" class="text-5xl text-golden font-bold mt-2 countdown-text">۱۰</p>
                 </div>
                 
-                <!-- Game Card -->
+                <!-- Question Card -->
                 <div id="question-card" class="card w-full flex flex-col items-center p-4 golden-glow" style="display:none;">
                     <span class="text-sm text-gray-400 mb-2">راند ${gameData.game.currentRound + 1} از ۳</span>
                     <p class="text-center text-lg font-semibold mb-6">${question ? question.q : ''}</p>
@@ -355,6 +362,7 @@
         startRoundInterval();
     }
 
+    // End game screen
     function renderEndGame() {
         const app = document.getElementById('app');
         const winnerText = gameData.game.isOnlineMode
@@ -404,6 +412,7 @@
         });
     }
 
+    // Settings screen
     function renderSettings() {
         const app = document.getElementById('app');
         app.innerHTML = `
@@ -425,6 +434,7 @@
         });
     }
 
+    // Placeholder screen for navbar items
     function renderPlaceholder() {
         const app = document.getElementById('app');
         app.innerHTML = `
@@ -442,7 +452,7 @@
         });
     }
 
-    // منطق بازی
+    // Game logic functions
     function resetGame() {
         gameData.game.playerScore = 0;
         gameData.game.botScore = 0;
@@ -571,8 +581,8 @@
         const botScoreDisplay = document.getElementById('bot-score-display');
         const botLogic = () => {
             const botChoice = Math.random();
-            if (botChoice < 0.6) { // 60% chance of answering
-                const isCorrect = Math.random() < 0.7; // 70% chance of correct
+            if (botChoice < 0.6) {
+                const isCorrect = Math.random() < 0.7;
                 if (isCorrect) {
                     gameData.game.botCorrect++;
                 }
@@ -586,7 +596,7 @@
         setTimeout(botLogic, responseTime);
     }
 
-    // شروع بازی
+    // Start the application
     document.addEventListener('DOMContentLoaded', () => {
         renderScreen();
     });
