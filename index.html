@@ -1,5 +1,4 @@
-
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -22,6 +21,82 @@
             overflow: hidden;
         }
 
+        /* Loading Screen Styles */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 1s ease-in-out;
+        }
+
+        #loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .logo-container {
+            margin-bottom: 20px;
+            position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            animation: rotate-glow 5s infinite linear;
+        }
+
+        .loading-text {
+            font-size: 1.5rem;
+            color: #ffd700;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+        }
+        
+        @keyframes rotate-glow {
+            0% {
+                transform: rotate(0deg);
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(255, 215, 0, 1);
+            }
+            100% {
+                transform: rotate(360deg);
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            }
+        }
+
+        /* Game Screen Styles */
         .screen {
             width: 100%;
             max-width: 500px;
@@ -101,6 +176,9 @@
             border-radius: 50%;
             position: relative;
             overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .profile-pic-inner:before {
@@ -121,14 +199,22 @@
             50% { transform: translate(-50%, -50%) rotate(180deg); }
         }
 
-        .profile-pic-icon {
+        /* Black and Gold Avatar */
+        .black-gold-avatar {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 60px;
-            color: #121212;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             z-index: 100;
+            
+        }
+
+        .black-gold-avatar svg {
+            width: 80px;
+            height: 80px;
+            color: #FFD700;
         }
 
         .button {
@@ -225,178 +311,192 @@
     </style>
 </head>
 <body>
-
-    <!-- Registration Screen -->
-    <div id="registration-screen" class="screen flex">
-        <h1 class="text-3xl font-bold mb-6 text-yellow-400">ثبت‌نام</h1>
-        <div class="w-full max-w-sm">
-            <input id="username-input" type="text" placeholder="نام کاربری" class="w-full p-4 mb-4 rounded-xl bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-right">
-            <input id="age-input" type="number" placeholder="سن" class="w-full p-4 mb-4 rounded-xl bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-right">
-            <div class="flex items-center mb-6">
-                <input id="terms-checkbox" type="checkbox" class="h-6 w-6 text-yellow-500 bg-gray-800 rounded-md border-gray-600 focus:ring-yellow-500">
-                <label for="terms-checkbox" class="mr-2 text-white text-sm">تمامی قوانین را می‌پذیرم</label>
-            </div>
-            <button id="register-button" class="w-full button">ورود به بازی</button>
-            <p id="error-message" class="text-red-400 mt-4 hidden">لطفا تمام فیلدها را پر کنید و قوانین را بپذیرید.</p>
+    <!-- صفحه لودینگ -->
+    <div id="loading-screen">
+        <div class="logo-container">
+            <img src="https://firebasestorage.googleapis.com/v0/b/chatbot-prod-46820.appspot.com/o/InShot_%DB%B2%DB%B0%DB%B2%DB%B5%DB%B0%DB%B9%DB%B2%DB%B4_%DB%B2%DB%B0%DB%B1%DB%B1%DB%B2%DB%B4%DB%B2%DB%B0%DB%B0.jpg?alt=media&token=4a7a8f1b-c68e-4f51-a957-c817b189a0c2" alt="لوگوی تیم اسکورت گیم">
+        </div>
+        <div class="loading-text">
+            در حال بارگذاری...
         </div>
     </div>
 
-    <!-- Main Menu Screen -->
-    <div id="menu-screen" class="screen flex">
-        <div class="top-icons">
-            <button id="settings-button" class="icon-button">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.941 3.31.82 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.941 1.543-.82 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.941-3.31-.82-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.941-1.543.82-3.31 2.37-2.37.525.228.947.546 1.066 1.065z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-            </button>
+    <!-- محتوای اصلی بازی -->
+    <div id="game-content" style="display: none;">
+        <!-- Registration Screen -->
+        <div id="registration-screen" class="screen flex">
+            <h1 class="text-3xl font-bold mb-6 text-yellow-400">ثبت‌نام</h1>
+            <div class="w-full max-w-sm">
+                <input id="username-input" type="text" placeholder="نام کاربری" class="w-full p-4 mb-4 rounded-xl bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-right">
+                <input id="age-input" type="number" placeholder="سن" class="w-full p-4 mb-4 rounded-xl bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-right">
+                <div class="flex items-center mb-6">
+                    <input id="terms-checkbox" type="checkbox" class="h-6 w-6 text-yellow-500 bg-gray-800 rounded-md border-gray-600 focus:ring-yellow-500">
+                    <label for="terms-checkbox" class="mr-2 text-white text-sm">تمامی قوانین را می‌پذیرم</label>
+                </div>
+                <button id="register-button" class="w-full button">ورود به بازی</button>
+                <p id="error-message" class="text-red-400 mt-4 hidden">لطفا تمام فیلدها را پر کنید و قوانین را بپذیرید.</p>
+            </div>
         </div>
-        <div class="profile-card">
-            <div class="profile-pic-container">
-                <div class="profile-pic-border"></div>
-                <div class="profile-pic-inner"></div>
-                <div class="profile-pic-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.93 0 3.5 1.57 3.5 3.5S13.93 12 12 12s-3.5-1.57-3.5-3.5S10.07 5 12 5zm0 14.2c-2.7 0-5.8 1.29-7.5 2.45v-1.12c0-1.39 1.62-2.38 3.02-3.08 1.4-.7 3.2-1.15 4.48-1.15s3.08.45 4.48 1.15c1.4.7 3.02 1.69 3.02 3.08v1.12c-1.7-1.16-4.8-2.45-7.5-2.45z"/>
+
+        <!-- Main Menu Screen -->
+        <div id="menu-screen" class="screen flex">
+            <div class="top-icons">
+                <button id="settings-button" class="icon-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.941 3.31.82 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.941 1.543-.82 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.941-3.31-.82-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.941-1.543.82-3.31 2.37-2.37.525.228.947.546 1.066 1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
+                </button>
+            </div>
+            <div class="profile-card">
+                <div class="profile-pic-container">
+                    <div class="profile-pic-border"></div>
+                    <div class="profile-pic-inner">
+                        <!-- Black and Gold Avatar -->
+                        <div class="black-gold-avatar">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.93 0 3.5 1.57 3.5 3.5S13.93 12 12 12s-3.5-1.57-3.5-3.5S10.07 5 12 5zm0 14.2c-2.7 0-5.8 1.29-7.5 2.45v-1.12c0-1.39 1.62-2.38 3.02-3.08 1.4-.7 3.2-1.15 4.48-1.15s3.08.45 4.48 1.15c1.4.7 3.02 1.69 3.02 3.08v1.12c-1.7-1.16-4.8-2.45-7.5-2.45z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <h2 id="player-username" class="text-xl font-bold"></h2>
+                    <div class="flex justify-center items-center gap-4 mt-2">
+                        <p class="text-sm">امتیاز: <span id="player-score"></span></p>
+                        <p class="text-sm">سکه: <span id="player-coins"></span></p>
+                    </div>
                 </div>
             </div>
-            <div class="text-center">
-                <h2 id="player-username" class="text-xl font-bold"></h2>
-                <div class="flex justify-center items-center gap-4 mt-2">
-                    <p class="text-sm">امتیاز: <span id="player-score"></span></p>
-                    <p class="text-sm">سکه: <span id="player-coins"></span></p>
+            <div class="flex flex-col gap-6 w-full mb-8">
+                <button id="single-player-button" class="button">شروع بازی</button>
+                <button id="online-game-button" class="button">بازی آنلاین</button>
+            </div>
+            <div class="bottom-icons">
+                <button class="icon-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                        <path d="M12 11.2c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                        <path d="M12 6.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                        <path d="M12 16.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                        <path d="M12 21.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                    </svg>
+                </button>
+                <button class="icon-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                        <path d="M14.5 12.5h-5v-1h5v1zm0-3h-5v-1h5v1z"/>
+                    </svg>
+                </button>
+                <button class="icon-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                        <path d="M12 11.2c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                        <path d="M12 6.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                        <path d="M12 16.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                        <path d="M12 21.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                    </svg>
+                </button>
+                <button class="icon-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                        <path d="M12 11.2c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                        <path d="M12 6.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                        <path d="M12 16.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                        <path d="M12 21.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Settings Screen -->
+        <div id="settings-screen" class="screen">
+            <h1 class="text-3xl font-bold mb-8 text-yellow-400">تنظیمات</h1>
+            <div class="flex flex-col gap-4 w-full max-w-sm">
+                <button class="w-full p-4 rounded-xl bg-gray-800 text-white font-bold text-center transition-colors hover:bg-gray-700">کد هدیه</button>
+                <button class="w-full p-4 rounded-xl bg-gray-800 text-white font-bold text-center transition-colors hover:bg-gray-700">سازندگان</button>
+                <button class="w-full p-4 rounded-xl bg-gray-800 text-white font-bold text-center transition-colors hover:bg-gray-700">پشتیبانی</button>
+            </div>
+            <button id="back-to-menu-from-settings" class="mt-8 button">بازگشت</button>
+        </div>
+
+        <!-- Single Player Game Screen -->
+        <div id="single-player-screen" class="screen">
+            <h1 class="text-3xl font-bold mb-4 text-yellow-400">بازی تک‌نفره</h1>
+            <div class="text-center w-full">
+                <p class="text-lg mb-2">مرحله: <span id="sp-level" class="font-bold"></span></p>
+                <div id="sp-question-box" class="bg-gray-800 p-6 rounded-xl mb-4 h-40 flex items-center justify-center text-lg font-bold"></div>
+                <div id="sp-options-container" class="flex flex-col gap-2"></div>
+                <p id="sp-result" class="mt-4 font-bold"></p>
+            </div>
+        </div>
+
+        <!-- Online Game Lobby Screen -->
+        <div id="online-lobby-screen" class="screen">
+            <div id="searching-state">
+                <h1 class="text-3xl font-bold mb-4 text-yellow-400">جستجوی بازیکن...</h1>
+                <div class="loader"></div>
+            </div>
+            <div id="opponent-found-state" class="hidden fade-in">
+                <h1 class="text-3xl font-bold mb-8 text-yellow-400">بازیکن پیدا شد!</h1>
+                <div class="profile-card w-full mb-8">
+                    <div id="opponent-profile-pic" class="profile-pic"></div>
+                    <div class="text-right flex-1">
+                        <p class="text-lg font-bold">حریف: <span id="opponent-name"></span></p>
+                        <p class="text-sm">کاپ‌ها: <span id="opponent-cups"></span></p>
+                    </div>
+                </div>
+                <button id="start-online-match" class="button w-full">شروع مسابقه</button>
+            </div>
+        </div>
+
+        <!-- Online Game Screen -->
+        <div id="online-game-screen" class="screen">
+            <div id="round-intro-screen" class="hidden fade-in">
+                <h1 class="text-3xl font-bold mb-4 text-yellow-400">راند جدید</h1>
+                <p class="text-xl">موضوع: <span id="round-topic-intro" class="font-bold"></span></p>
+                <p class="text-xl mt-4">شروع در <span id="round-countdown" class="font-bold text-yellow-400"></span> ثانیه</p>
+            </div>
+            <div id="game-play-screen" class="hidden">
+                <div class="w-full flex justify-between items-center mb-4">
+                    <div class="text-sm">راند <span id="current-round"></span> / ۳</div>
+                    <div class="text-sm">زمان: <span id="round-timer" class="font-bold">40</span> ثانیه</div>
+                </div>
+                <div class="w-full flex justify-between items-center mb-4">
+                    <div class="text-right text-sm">شما: <span id="player-online-score" class="font-bold">0</span></div>
+                    <div class="text-sm">زمان سوال: <span id="question-timer" class="font-bold">10</span></div>
+                    <div class="text-left text-sm">حریف: <span id="bot-online-score" class="font-bold">0</span></div>
+                </div>
+                <div id="online-question-box" class="bg-gray-800 p-6 rounded-xl mb-4 h-40 flex items-center justify-center text-lg font-bold"></div>
+                <div id="online-options-container" class="flex flex-col gap-2"></div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="screen">
+            <h1 class="text-3xl font-bold mb-4 text-yellow-400">پایان بازی</h1>
+            <div id="winner-display" class="mb-6"></div>
+            <div class="w-full max-w-sm mb-6 bg-gray-800 p-4 rounded-xl">
+                <div class="flex justify-between items-center text-lg font-bold">
+                    <span>شما</span>
+                    <span>درست: <span id="player-correct">0</span></span>
+                    <span>غلط: <span id="player-incorrect">0</span></span>
+                </div>
+                <div class="flex justify-between items-center text-lg font-bold mt-2">
+                    <span id="bot-name-result"></span>
+                    <span>درست: <span id="bot-correct">0</span></span>
+                    <span>غلط: <span id="bot-incorrect">0</span></span>
                 </div>
             </div>
+            <button id="back-to-menu-from-end" class="button">بازگشت به منو</button>
         </div>
-        <div class="flex flex-col gap-6 w-full mb-8">
-            <button id="single-player-button" class="button">شروع بازی</button>
-            <button id="online-game-button" class="button">بازی آنلاین</button>
-        </div>
-        <div class="bottom-icons">
-             <button class="icon-button">
-                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                     <path d="M12 11.2c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
-                     <path d="M12 6.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
-                     <path d="M12 16.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
-                     <path d="M12 21.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
-                 </svg>
-             </button>
-             <button class="icon-button">
-                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                    <path d="M14.5 12.5h-5v-1h5v1zm0-3h-5v-1h5v1z"/>
-                 </svg>
-             </button>
-             <button class="icon-button">
-                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                     <path d="M12 11.2c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
-                     <path d="M12 6.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
-                     <path d="M12 16.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
-                     <path d="M12 21.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
-                 </svg>
-             </button>
-             <button class="icon-button">
-                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                    <path d="M12 11.2c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
-                    <path d="M12 6.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
-                    <path d="M12 16.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
-                    <path d="M12 21.5c-1.39 0-2.5.9-2.5 2.25s1.11 2.25 2.5 2.25 2.5-.9 2.5-2.25-1.11-2.25-2.5-2.25z"/>
-                 </svg>
-             </button>
-         </div>
-    </div>
 
-    <!-- Settings Screen -->
-    <div id="settings-screen" class="screen">
-        <h1 class="text-3xl font-bold mb-8 text-yellow-400">تنظیمات</h1>
-        <div class="flex flex-col gap-4 w-full max-w-sm">
-            <button class="w-full p-4 rounded-xl bg-gray-800 text-white font-bold text-center transition-colors hover:bg-gray-700">کد هدیه</button>
-            <button class="w-full p-4 rounded-xl bg-gray-800 text-white font-bold text-center transition-colors hover:bg-gray-700">سازندگان</button>
-            <button class="w-full p-4 rounded-xl bg-gray-800 text-white font-bold text-center transition-colors hover:bg-gray-700">پشتیبانی</button>
-        </div>
-        <button id="back-to-menu-from-settings" class="mt-8 button">بازگشت</button>
-    </div>
-
-    <!-- Single Player Game Screen -->
-    <div id="single-player-screen" class="screen">
-        <h1 class="text-3xl font-bold mb-4 text-yellow-400">بازی تک‌نفره</h1>
-        <div class="text-center w-full">
-            <p class="text-lg mb-2">مرحله: <span id="sp-level" class="font-bold"></span></p>
-            <div id="sp-question-box" class="bg-gray-800 p-6 rounded-xl mb-4 h-40 flex items-center justify-center text-lg font-bold"></div>
-            <div id="sp-options-container" class="flex flex-col gap-2"></div>
-            <p id="sp-result" class="mt-4 font-bold"></p>
-        </div>
-    </div>
-
-    <!-- Online Game Lobby Screen -->
-    <div id="online-lobby-screen" class="screen">
-        <div id="searching-state">
-            <h1 class="text-3xl font-bold mb-4 text-yellow-400">جستجوی بازیکن...</h1>
-            <div class="loader"></div>
-        </div>
-        <div id="opponent-found-state" class="hidden fade-in">
-            <h1 class="text-3xl font-bold mb-8 text-yellow-400">بازیکن پیدا شد!</h1>
-            <div class="profile-card w-full mb-8">
-                <div id="opponent-profile-pic" class="profile-pic"></div>
-                <div class="text-right flex-1">
-                    <p class="text-lg font-bold">حریف: <span id="opponent-name"></span></p>
-                    <p class="text-sm">کاپ‌ها: <span id="opponent-cups"></span></p>
-                </div>
+        <!-- Custom Modal for Alerts -->
+        <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center p-4">
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg w-full max-w-sm text-center">
+                <p id="modal-message" class="text-lg mb-4"></p>
+                <button id="modal-ok-button" class="button w-full">باشه</button>
             </div>
-            <button id="start-online-match" class="button w-full">شروع مسابقه</button>
-        </div>
-    </div>
-
-    <!-- Online Game Screen -->
-    <div id="online-game-screen" class="screen">
-        <div id="round-intro-screen" class="hidden fade-in">
-            <h1 class="text-3xl font-bold mb-4 text-yellow-400">راند جدید</h1>
-            <p class="text-xl">موضوع: <span id="round-topic-intro" class="font-bold"></span></p>
-            <p class="text-xl mt-4">شروع در <span id="round-countdown" class="font-bold text-yellow-400"></span> ثانیه</p>
-        </div>
-        <div id="game-play-screen" class="hidden">
-            <div class="w-full flex justify-between items-center mb-4">
-                <div class="text-sm">راند <span id="current-round"></span> / ۳</div>
-                <div class="text-sm">زمان: <span id="round-timer" class="font-bold">40</span> ثانیه</div>
-            </div>
-            <div class="w-full flex justify-between items-center mb-4">
-                <div class="text-right text-sm">شما: <span id="player-online-score" class="font-bold">0</span></div>
-                <div class="text-sm">زمان سوال: <span id="question-timer" class="font-bold">10</span></div>
-                <div class="text-left text-sm">حریف: <span id="bot-online-score" class="font-bold">0</span></div>
-            </div>
-            <div id="online-question-box" class="bg-gray-800 p-6 rounded-xl mb-4 h-40 flex items-center justify-center text-lg font-bold"></div>
-            <div id="online-options-container" class="flex flex-col gap-2"></div>
-        </div>
-    </div>
-
-    <!-- Game Over Screen -->
-    <div id="game-over-screen" class="screen">
-        <h1 class="text-3xl font-bold mb-4 text-yellow-400">پایان بازی</h1>
-        <div id="winner-display" class="mb-6"></div>
-        <div class="w-full max-w-sm mb-6 bg-gray-800 p-4 rounded-xl">
-            <div class="flex justify-between items-center text-lg font-bold">
-                <span>شما</span>
-                <span>درست: <span id="player-correct">0</span></span>
-                <span>غلط: <span id="player-incorrect">0</span></span>
-            </div>
-            <div class="flex justify-between items-center text-lg font-bold mt-2">
-                <span id="bot-name-result"></span>
-                <span>درست: <span id="bot-correct">0</span></span>
-                <span>غلط: <span id="bot-incorrect">0</span></span>
-            </div>
-        </div>
-        <button id="back-to-menu-from-end" class="button">بازگشت به منو</button>
-    </div>
-
-    <!-- Custom Modal for Alerts -->
-    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center p-4">
-        <div class="bg-gray-800 p-6 rounded-xl shadow-lg w-full max-w-sm text-center">
-            <p id="modal-message" class="text-lg mb-4"></p>
-            <button id="modal-ok-button" class="button w-full">باشه</button>
         </div>
     </div>
 
@@ -498,39 +598,11 @@
         { q: "آن چیست که اگر به آن نگاه کنید، همه چیز را می‌بینید؟", a: "آینه" },
         { q: "آن چیست که یک دست دارد اما نمی‌تواند کاری انجام دهد؟", a: "ساعت" },
         { q: "آن چیست که یک پا دارد اما نمی‌تواند راه برود؟", a: "کفش" },
-        { q: "آن چیست که اگر آن را به دست بیاورید، آن را از دست می‌دهید؟", a: "راز" },
+        { q: "آن چیست که اگر به آن دست بزنید، از بین می‌رود؟", a: "راز" },
         { q: "آن چیست که به همه تعلق دارد، اما هیچ‌کس نمی‌تواند آن را داشته باشد؟", a: "زمان" },
         { q: "آن چیست که همیشه در حال حرکت است، اما هیچ‌گاه به مقصد نمی‌رسد؟", a: "رودخانه" },
         { q: "آن چیست که یک دهان دارد اما نمی‌خورد؟", a: "قلم" },
         { q: "آن چیست که همیشه در حال رشد است، اما هیچ‌گاه بزرگ نمی‌شود؟", a: "دروغ" },
-        { q: "آن چیست که هرچه بیشتر از آن می‌گیرید، بیشتر می‌شود؟", a: "سنگ" },
-        { q: "آن چیست که یک پا دارد اما نمی‌تواند راه برود؟", a: "کفش" },
-        { q: "آن چیست که اگر به آن نگاه کنید، همه چیز را می‌بینید؟", a: "آینه" },
-        { q: "آن چیست که یک دست دارد اما نمی‌تواند کاری انجام دهد؟", a: "ساعت" },
-        { q: "آن چیست که یک چشم دارد اما نمی‌بیند؟", a: "سوزن" },
-        { q: "آن چیست که هرچه بیشتر از آن می‌خورید، لاغرتر می‌شوید؟", a: "غصه" },
-        { q: "آن چیست که همه چیز را در خود دارد، اما نمی‌توانید آن را از بین ببرید؟", a: "خواب" },
-        { q: "آن چیست که هرچه بیشتر از آن می‌گیرید، بیشتر می‌شود؟", a: "سنگ" },
-        { q: "آن چیست که یک پا دارد اما نمی‌تواند راه برود؟", a: "کفش" },
-        { q: "آن چیست که اگر به آن نگاه کنید، همه چیز را می‌بینید؟", a: "آینه" },
-        { q: "آن چیست که یک دست دارد اما نمی‌تواند کاری انجام دهد؟", a: "ساعت" },
-        { q: "آن چیست که یک چشم دارد اما نمی‌بیند؟", a: "سوزن" },
-        { q: "آن چیست که هرچه بیشتر از آن می‌خورید، لاغرتر می‌شوید؟", a: "غصه" },
-        { q: "آن چیست که همه چیز را در خود دارد، اما نمی‌توانید آن را از بین ببرید؟", a: "خواب" },
-        { q: "آن چیست که هرچه بیشتر از آن می‌گیرید، بیشتر می‌شود؟", a: "سنگ" },
-        { q: "آن چیست که یک پا دارد اما نمی‌تواند راه برود؟", a: "کفش" },
-        { q: "آن چیست که اگر به آن نگاه کنید، همه چیز را می‌بینید؟", a: "آینه" },
-        { q: "آن چیست که یک دست دارد اما نمی‌تواند کاری انجام دهد؟", a: "ساعت" },
-        { q: "آن چیست که یک چشم دارد اما نمی‌بیند؟", a: "سوزن" },
-        { q: "آن چیست که هرچه بیشتر از آن می‌خورید، لاغرتر می‌شوید؟", a: "غصه" },
-        { q: "آن چیست که همه چیز را در خود دارد، اما نمی‌توانید آن را از بین ببرید؟", a: "خواب" },
-        { q: "آن چیست که هرچه بیشتر از آن می‌گیرید، بیشتر می‌شود؟", a: "سنگ" },
-        { q: "آن چیست که یک پا دارد اما نمی‌تواند راه برود؟", a: "کفش" },
-        { q: "آن چیست که اگر به آن نگاه کنید، همه چیز را می‌بینید؟", a: "آینه" },
-        { q: "آن چیست که یک دست دارد اما نمی‌تواند کاری انجام دهد؟", a: "ساعت" },
-        { q: "آن چیست که یک چشم دارد اما نمی‌بیند؟", a: "سوزن" },
-        { q: "آن چیست که هرچه بیشتر از آن می‌خورید، لاغرتر می‌شوید؟", a: "غصه" },
-        { q: "آن چیست که همه چیز را در خود دارد، اما نمی‌توانید آن را از بین ببرید؟", a: "خواب" },
         { q: "آن چیست که هرچه بیشتر از آن می‌گیرید، بیشتر می‌شود؟", a: "سنگ" },
         { q: "آن چیست که یک پا دارد اما نمی‌تواند راه برود؟", a: "کفش" },
         { q: "آن چیست که اگر به آن نگاه کنید، همه چیز را می‌بینید؟", a: "آینه" },
@@ -896,15 +968,27 @@
         return array;
     }
 
-    // Initialize
-    window.onload = () => {
-        const storedData = localStorage.getItem('playerData');
-        if (storedData) {
-            showScreen('menu-screen');
-            updateProfileUI();
-        } else {
-            showScreen('registration-screen');
-        }
+    // Initialize - This function now handles the loading screen transition
+    window.onload = function() {
+        const loadingScreen = document.getElementById('loading-screen');
+        const gameContent = document.getElementById('game-content');
+
+        setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                gameContent.style.display = 'block';
+
+                // Game initialization logic after loading screen is gone
+                const storedData = localStorage.getItem('playerData');
+                if (storedData) {
+                    showScreen('menu-screen');
+                    updateProfileUI();
+                } else {
+                    showScreen('registration-screen');
+                }
+            }, 1000);
+        }, 3000);
     };
 </script>
 
