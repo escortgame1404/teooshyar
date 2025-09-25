@@ -62,11 +62,35 @@
         .countdown-text {
             font-variant-numeric: tabular-nums;
         }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .modal-content {
+            background-color: #1a1a1a;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        .main-menu-bg {
+            background: radial-gradient(circle at top, rgba(255, 215, 0, 0.08) 0%, rgba(18, 18, 18, 0) 60%),
+                        repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 5px);
+        }
     </style>
 </head>
 <body class="bg-[#121212] flex items-center justify-center min-h-screen p-4">
 
-<div id="app" class="w-full max-w-sm mx-auto flex flex-col items-center"></div>
+<div id="app" class="w-full max-w-sm mx-auto flex flex-col items-center main-menu-bg"></div>
 
 <script>
     // Game data and state management
@@ -122,7 +146,20 @@
             intervalTimer: null,
         }
     };
+    
+    // Ban constants and logic
+    const BAN_DURATION_MS = 40 * 60 * 1000; // 40 minutes in milliseconds
+    const BAN_KEY = 'onlineBanTimestamp';
 
+    function getRemainingBanTime() {
+        const banTimestamp = localStorage.getItem(BAN_KEY);
+        if (!banTimestamp) {
+            return 0;
+        }
+        const elapsedTime = Date.now() - parseInt(banTimestamp);
+        return Math.max(0, BAN_DURATION_MS - elapsedTime);
+    }
+    
     // The main render function
     function renderScreen() {
         const app = document.getElementById('app');
@@ -148,6 +185,9 @@
                 break;
             case 'navbarPlaceholder':
                 renderPlaceholder();
+                break;
+            case 'banPanel':
+                renderBanPanel();
                 break;
         }
     }
@@ -182,7 +222,7 @@
                 gameData.game.screen = 'mainMenu';
                 renderScreen();
             } else {
-                alert('لطفاً تمامی فیلدها را پر کنید و با قوانین موافقت نمایید.');
+                renderModal('لطفاً تمامی فیلدها را پر کنید و با قوانین موافقت نمایید.');
             }
         });
     }
@@ -191,7 +231,7 @@
     function renderMainMenu() {
         const app = document.getElementById('app');
         app.innerHTML = `
-            <div class="w-full flex flex-col h-full">
+            <div class="w-full flex flex-col h-full main-menu-bg">
                 <!-- Top Bar -->
                 <div class="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-4 py-4">
                     <div id="settings-btn" class="p-2 cursor-pointer transition-transform duration-200 hover:rotate-45">
@@ -202,7 +242,7 @@
                     </div>
                     <div class="flex items-center space-x-2 space-x-reverse">
                         <div class="flex flex-col items-end">
-                            <span class="text-sm font-bold">${gameData.user.name}</span>
+                            <span class="text-sm font-bold text-gray-200">${gameData.user.name}</span>
                             <span class="text-xs text-golden">${gameData.user.cups} کاپ</span>
                         </div>
                         <div class="profile-circle">
@@ -258,9 +298,15 @@
             renderScreen();
         });
         document.getElementById('online-btn').addEventListener('click', () => {
-            gameData.game.isOnlineMode = true;
-            gameData.game.screen = 'onlineSearching';
-            renderScreen();
+            const remainingBanTime = getRemainingBanTime();
+            if (remainingBanTime > 0) {
+                gameData.game.screen = 'banPanel';
+                renderScreen();
+            } else {
+                gameData.game.isOnlineMode = true;
+                gameData.game.screen = 'onlineSearching';
+                renderScreen();
+            }
         });
         document.getElementById('store-btn').addEventListener('click', () => {
             gameData.game.screen = 'navbarPlaceholder';
@@ -296,7 +342,7 @@
         }, 3000);
     }
 
-    // Game screen with rounds
+    // Game screen with back button and rounds
     function renderGame() {
         const app = document.getElementById('app');
         const topic = gameData.topics[gameData.game.currentRound];
@@ -305,6 +351,11 @@
             <div class="w-full flex flex-col h-full">
                 <!-- Top Bar -->
                 <div class="flex justify-between items-center w-full p-4 mb-4">
+                    <button id="back-btn" class="p-2 cursor-pointer transition-transform duration-200 hover:scale-110">
+                        <svg class="h-8 w-8 text-golden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                    </button>
                     <div class="flex flex-col items-center">
                         <span class="text-xs text-gray-400">شما</span>
                         <span class="text-lg text-golden font-bold">${gameData.game.playerCorrect}</span>
@@ -314,6 +365,7 @@
                         <span class="text-xs text-gray-400">حریف</span>
                         <span class="text-lg text-golden font-bold" id="bot-score-display">${gameData.game.isOnlineMode ? gameData.game.botCorrect : ''}</span>
                     </div>
+                    <div></div> <!-- Placeholder for alignment -->
                 </div>
 
                 <!-- Round Introduction and Countdown -->
@@ -340,10 +392,11 @@
         document.querySelectorAll('.option-btn').forEach(button => {
             button.addEventListener('click', handleAnswer);
         });
+        document.getElementById('back-btn').addEventListener('click', handleGameExit);
 
         startRoundInterval();
     }
-
+    
     // End game screen
     function renderEndGame() {
         const app = document.getElementById('app');
@@ -387,10 +440,10 @@
             renderScreen();
         });
         document.getElementById('review-questions-btn').addEventListener('click', () => {
-            alert('این قابلیت هنوز پیاده‌سازی نشده است.');
+            renderModal('این قابلیت هنوز پیاده‌سازی نشده است.');
         });
         document.getElementById('share-btn').addEventListener('click', () => {
-            alert('این قابلیت هنوز پیاده‌سازی نشده است.');
+            renderModal('این قابلیت هنوز پیاده‌سازی نشده است.');
         });
     }
 
@@ -423,6 +476,30 @@
             <div class="card w-full p-6 space-y-4 text-center">
                 <h2 class="text-2xl font-bold text-golden">این صفحه در دست ساخت است!</h2>
                 <p class="text-gray-400">به زودی ویژگی‌های جدیدی به بازی اضافه می‌شود.</p>
+                <button id="back-to-menu-btn" class="button w-full golden-gradient text-gray-900 mt-6">
+                    بازگشت به منو
+                </button>
+            </div>
+        `;
+        document.getElementById('back-to-menu-btn').addEventListener('click', () => {
+            gameData.game.screen = 'mainMenu';
+            renderScreen();
+        });
+    }
+    
+    // Ban panel
+    function renderBanPanel() {
+        const app = document.getElementById('app');
+        const remainingTimeMinutes = Math.ceil(getRemainingBanTime() / (60 * 1000));
+        app.innerHTML = `
+            <div class="card w-full p-6 space-y-4 text-center golden-glow">
+                <h2 class="text-2xl font-bold text-golden">اکانت شما مسدود است</h2>
+                <p class="text-gray-400">
+                    به علت ترک بازی آنلاین، اکانت شما برای بازی آنلاین به مدت 
+                    <span class="text-golden font-bold">${remainingTimeMinutes} دقیقه</span>
+                    مسدود شده است.
+                </p>
+                <p class="text-gray-400">تا زمان رفع مسدودی می‌توانید بازی تک نفره انجام دهید.</p>
                 <button id="back-to-menu-btn" class="button w-full golden-gradient text-gray-900 mt-6">
                     بازگشت به منو
                 </button>
@@ -576,6 +653,60 @@
 
         const responseTime = Math.random() * 2500 + 500; // 0.5 to 3 seconds
         setTimeout(botLogic, responseTime);
+    }
+
+    // Custom Modal/Panel functions
+    function renderModal(message, isConfirmation = false, onConfirm = null) {
+        const app = document.getElementById('app');
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content card golden-glow">
+                <p class="text-lg text-gray-300 mb-4">${message}</p>
+                <div class="flex justify-center space-x-4 space-x-reverse">
+                    ${isConfirmation ? `
+                        <button id="confirm-yes" class="button golden-gradient text-gray-900">بله</button>
+                        <button id="confirm-no" class="button bg-[#2e2e2e] text-golden">خیر</button>
+                    ` : `
+                        <button id="modal-close" class="button golden-gradient text-gray-900">بستن</button>
+                    `}
+                </div>
+            </div>
+        `;
+        app.appendChild(modal);
+
+        if (isConfirmation) {
+            document.getElementById('confirm-yes').addEventListener('click', () => {
+                if (onConfirm) onConfirm();
+                modal.remove();
+            });
+            document.getElementById('confirm-no').addEventListener('click', () => {
+                modal.remove();
+            });
+        } else {
+            document.getElementById('modal-close').addEventListener('click', () => {
+                modal.remove();
+            });
+        }
+    }
+    
+    function handleGameExit() {
+        clearInterval(gameData.game.roundTimer);
+        clearInterval(gameData.game.intervalTimer);
+        if (gameData.game.isOnlineMode) {
+            renderModal(
+                'مطمئنی میخوای برگردی؟ در صورت ترک بازی اکانت کاربری شما ممکن است مسدود شود.',
+                true,
+                () => {
+                    localStorage.setItem(BAN_KEY, Date.now());
+                    gameData.game.screen = 'mainMenu';
+                    renderScreen();
+                }
+            );
+        } else {
+            gameData.game.screen = 'mainMenu';
+            renderScreen();
+        }
     }
 
     // Start the application
