@@ -14,6 +14,11 @@
         }
         .golden-gradient {
             background: linear-gradient(90deg, #FAD961, #F79521);
+            transition: all 0.3s ease-in-out;
+        }
+        .golden-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(250, 217, 97, 0.4);
         }
         .golden-glow {
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
@@ -81,10 +86,35 @@
             text-align: center;
             width: 90%;
             max-width: 400px;
+            animation: fadeInScale 0.3s ease-out;
         }
         .main-menu-bg {
             background: radial-gradient(circle at top, rgba(255, 215, 0, 0.08) 0%, rgba(18, 18, 18, 0) 60%),
                         repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 5px);
+        }
+
+        /* انیمیشن برای ذره‌بین در صفحه جستجو */
+        @keyframes pulse-rotate {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(15deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .magnifying-glass-animated {
+            animation: pulse-rotate 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* انیمیشن برای ورودی/خروجی پنل‌ها */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .panel-enter {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
@@ -148,7 +178,7 @@
     };
     
     // Ban constants and logic
-    const BAN_DURATION_MS = 40 * 60 * 1000; // 40 minutes in milliseconds
+    const BAN_DURATION_MS = 60 * 1000; // 1 دقیقه در میلی‌ثانیه
     const BAN_KEY = 'onlineBanTimestamp';
 
     function getRemainingBanTime() {
@@ -163,6 +193,8 @@
     // The main render function
     function renderScreen() {
         const app = document.getElementById('app');
+        app.classList.remove('panel-enter');
+        void app.offsetWidth; // Force reflow to restart animation
         app.innerHTML = '';
         switch (gameData.game.screen) {
             case 'onboarding':
@@ -190,6 +222,7 @@
                 renderBanPanel();
                 break;
         }
+        app.classList.add('panel-enter');
     }
 
     // Onboarding screen
@@ -326,8 +359,8 @@
     function renderOnlineSearching() {
         const app = document.getElementById('app');
         app.innerHTML = `
-            <div class="flex flex-col items-center justify-center h-full space-y-8 animate-pulse">
-                <svg class="h-24 w-24 text-golden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="flex flex-col items-center justify-center h-full space-y-8">
+                <svg class="h-24 w-24 text-golden magnifying-glass-animated" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <p class="text-lg text-gray-400">در حال جستجوی حریف...</p>
@@ -487,28 +520,58 @@
         });
     }
     
-    // Ban panel
+    let banCountdownInterval;
+
     function renderBanPanel() {
         const app = document.getElementById('app');
-        const remainingTimeMinutes = Math.ceil(getRemainingBanTime() / (60 * 1000));
         app.innerHTML = `
-            <div class="card w-full p-6 space-y-4 text-center golden-glow">
+            <div class="card w-full p-6 space-y-4 text-center golden-glow panel-enter">
                 <h2 class="text-2xl font-bold text-golden">اکانت شما مسدود است</h2>
                 <p class="text-gray-400">
-                    به علت ترک بازی آنلاین، اکانت شما برای بازی آنلاین به مدت 
-                    <span class="text-golden font-bold">${remainingTimeMinutes} دقیقه</span>
-                    مسدود شده است.
+                    به علت ترک بازی آنلاین، اکانت شما به مدت یک دقیقه مسدود شده است.
                 </p>
+                <div class="flex flex-col items-center">
+                    <span class="text-sm text-gray-500">زمان باقی‌مانده:</span>
+                    <span id="ban-countdown" class="text-4xl font-bold text-red-500 countdown-text mt-2">--:--</span>
+                </div>
                 <p class="text-gray-400">تا زمان رفع مسدودی می‌توانید بازی تک نفره انجام دهید.</p>
                 <button id="back-to-menu-btn" class="button w-full golden-gradient text-gray-900 mt-6">
                     بازگشت به منو
                 </button>
             </div>
         `;
+        
         document.getElementById('back-to-menu-btn').addEventListener('click', () => {
+            // Stop the countdown when leaving the page
+            clearInterval(banCountdownInterval);
             gameData.game.screen = 'mainMenu';
             renderScreen();
         });
+
+        // Start countdown
+        const countdownElement = document.getElementById('ban-countdown');
+        if (!countdownElement) return;
+
+        clearInterval(banCountdownInterval); // Clear any previous interval
+        
+        function updateCountdown() {
+            const remainingTime = getRemainingBanTime();
+            if (remainingTime <= 0) {
+                clearInterval(banCountdownInterval);
+                renderModal('مسدودیت اکانت شما برطرف شد!', false, () => {
+                    gameData.game.screen = 'mainMenu';
+                    renderScreen();
+                });
+                return;
+            }
+            
+            const minutes = Math.floor(remainingTime / 60000);
+            const seconds = Math.floor((remainingTime % 60000) / 1000);
+            countdownElement.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+        
+        updateCountdown();
+        banCountdownInterval = setInterval(updateCountdown, 1000);
     }
 
     // Game logic functions
@@ -526,7 +589,7 @@
     function startRoundInterval() {
         const introScreen = document.getElementById('round-intro');
         const countdownElement = document.getElementById('interval-countdown');
-        let count = 10;
+        let count = 3; // Reduced for faster testing
         introScreen.style.display = 'flex';
 
         gameData.game.intervalTimer = setInterval(() => {
@@ -689,31 +752,23 @@
             });
         }
     }
-    
+
     function handleGameExit() {
         clearInterval(gameData.game.roundTimer);
         clearInterval(gameData.game.intervalTimer);
+        
+        // Ban logic for leaving online game
         if (gameData.game.isOnlineMode) {
-            renderModal(
-                'مطمئنی میخوای برگردی؟ در صورت ترک بازی اکانت کاربری شما ممکن است مسدود شود.',
-                true,
-                () => {
-                    localStorage.setItem(BAN_KEY, Date.now());
-                    gameData.game.screen = 'mainMenu';
-                    renderScreen();
-                }
-            );
+            localStorage.setItem(BAN_KEY, Date.now());
+            gameData.game.screen = 'banPanel';
         } else {
             gameData.game.screen = 'mainMenu';
-            renderScreen();
         }
-    }
-
-    // Start the application
-    document.addEventListener('DOMContentLoaded', () => {
         renderScreen();
-    });
+    }
+    
+    // Initial render
+    renderScreen();
 </script>
-
 </body>
 </html>
