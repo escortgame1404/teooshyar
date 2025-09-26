@@ -48,12 +48,16 @@
             transform: translateY(1px);
             box-shadow: 0 2px 10px rgba(255, 215, 0, 0.2);
         }
-        .disabled-btn {
-            background: #4a4a4a;
-            color: #888;
+        .btn-golden.disabled {
+            background: linear-gradient(145deg, #5c5c5c, #7a7a7a, #5c5c5c);
+            color: #aaa;
             cursor: not-allowed;
             box-shadow: none;
-            border: 1px solid #555;
+            border-color: #666;
+        }
+        .btn-golden.disabled:hover {
+            transform: none;
+            box-shadow: none;
         }
         .card {
             background-color: rgba(255, 255, 255, 0.05);
@@ -113,6 +117,22 @@
             border-color: #555;
             box-shadow: none;
         }
+        .btn-option {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #E0E0E0;
+            padding: 12px;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        .btn-option:hover:not(:disabled) {
+            background-color: rgba(255, 215, 0, 0.2);
+            border-color: #FFD700;
+        }
+        .btn-option:disabled {
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body class="overflow-hidden">
@@ -120,7 +140,7 @@
     <!-- Onboarding Screen -->
     <div id="onboarding-screen" class="screen p-8 flex flex-col justify-center items-center h-screen">
         <div class="w-full max-w-sm text-center">
-            <h1 class="text-4xl font-black gold-gradient-text mb-8">به چیستان خوش آمدید</h1>
+            <h1 class="text-4xl font-black gold-gradient-text mb-8">ثبت نام</h1>
             <div class="space-y-6">
                 <input id="username-input" type="text" placeholder="نام کاربری" class="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-yellow-400">
                 <input id="age-input" type="number" placeholder="سن" class="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-yellow-400">
@@ -147,17 +167,28 @@
             <button id="settings-btn" class="text-3xl">⚙️</button>
         </header>
 
-        <main class="flex-grow flex flex-col justify-center items-center space-y-6">
-            <button id="start-game-btn" class="w-full max-w-xs btn-golden text-2xl py-4">شروع بازی</button>
-            <button class="w-full max-w-xs disabled-btn text-2xl py-4">
+        <main class="flex-grow flex flex-col justify-center items-center space-y-4">
+            <button id="start-game-btn" class="w-full max-w-[280px] btn-golden text-xl py-3">شروع بازی</button>
+            <button class="w-full max-w-[280px] btn-golden disabled text-xl py-3">
                 بازی آنلاین <span class="text-xs">(به زودی)</span>
             </button>
         </main>
 
-        <footer class="grid grid-cols-3 gap-4 text-center">
-            <button class="text-gray-400">فروشگاه</button>
-            <button class="text-gray-400">چالش‌ها</button>
-            <button class="text-gray-400">تاریخچه</button>
+        <footer class="w-full max-w-sm mx-auto pb-2 px-2">
+            <div class="bg-black/30 backdrop-blur-sm border border-yellow-400/20 rounded-2xl grid grid-cols-3 gap-2 text-center p-2">
+                <button class="flex flex-col items-center justify-center text-gray-400 p-2 rounded-lg hover:bg-yellow-400/10 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                    <span>فروشگاه</span>
+                </button>
+                <button class="flex flex-col items-center justify-center text-gray-400 p-2 rounded-lg hover:bg-yellow-400/10 transition-colors text-sm">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.539 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.539-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
+                    <span>چالش‌ها</span>
+                </button>
+                <button class="flex flex-col items-center justify-center text-gray-400 p-2 rounded-lg hover:bg-yellow-400/10 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>تاریخچه</span>
+                </button>
+            </div>
         </footer>
     </div>
     
@@ -174,10 +205,9 @@
 
     <!-- Level Selection Screen -->
     <div id="level-selection-screen" class="screen p-6">
-        <header class="flex items-center justify-between mb-8">
-            <button id="back-to-menu-btn" class="text-3xl">➡️</button>
+        <header class="relative flex items-center justify-center mb-8 py-2">
             <h1 class="text-3xl font-bold gold-gradient-text">فصل اول</h1>
-            <div class="w-8"></div>
+            <button id="back-to-menu-btn" class="absolute top-2 right-0 text-3xl">➡️</button>
         </header>
         <div id="level-grid" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-4">
             <!-- Level icons will be generated here -->
@@ -186,27 +216,27 @@
 
     <!-- Gameplay Screen -->
     <div id="gameplay-screen" class="screen p-6 flex flex-col h-screen">
-        <header class="flex items-center justify-between mb-4">
+        <header class="flex items-center justify-between mb-2">
              <button id="back-to-levels-btn" class="text-3xl">➡️</button>
             <div class="text-center">
                 <p class="text-lg">مرحله <span id="game-level-number"></span></p>
                 <p class="text-2xl font-bold gold-gradient-text">امتیاز: <span id="game-score">0</span></p>
             </div>
-            <div id="game-timer-container" class="w-16 h-16 flex items-center justify-center rounded-full border-4 border-yellow-400">
-                <span id="game-timer" class="text-2xl font-bold">10</span>
-            </div>
+             <div class="w-8"></div> <!-- Placeholder for alignment -->
         </header>
         
+        <div class="w-full bg-gray-700 rounded-full h-2.5 mb-6">
+            <div id="game-progress-bar" class="bg-yellow-400 h-2.5 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+        </div>
+
         <main class="flex-grow flex flex-col justify-center items-center text-center">
             <div class="w-full max-w-lg card p-8">
-                <p id="riddle-question" class="text-xl md:text-2xl mb-8 min-h-[100px]"></p>
-                <input id="riddle-answer-input" type="text" placeholder="پاسخ خود را بنویسید..." class="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                <p id="riddle-question" class="text-xl md:text-2xl mb-8 min-h-[100px] flex items-center justify-center"></p>
+                <div id="options-container" class="grid grid-cols-2 gap-4">
+                    <!-- Option buttons will be generated here -->
+                </div>
             </div>
         </main>
-        
-        <footer class="mt-4 text-center">
-            <button id="submit-answer-btn" class="w-full max-w-xs btn-golden text-lg">ثبت پاسخ</button>
-        </footer>
     </div>
     
     <!-- Level End Screen -->
@@ -240,8 +270,7 @@
         // --- Game State & Data ---
         const TOTAL_LEVELS = 70;
         const RIDDLES_PER_LEVEL = 5;
-        const TIME_PER_RIDDLE = 10; // seconds
-
+        
         let gameState = {
             username: '',
             age: null,
@@ -252,31 +281,29 @@
             currentRiddles: [],
             currentRiddleIndex: 0,
             score: 0,
-            timerInterval: null,
-            timeLeft: TIME_PER_RIDDLE,
         };
 
         const allRiddles = [
-            { q: 'آن چیست که پر دارد ولی پرواز نمی‌کند؟', a: 'بالش' },
-            { q: 'آن چیست که هرچه از آن بردارند بزرگتر می‌شود؟', a: 'گودال' },
-            { q: 'آن چیست که یک چشم دارد ولی نمی‌بیند؟', a: 'سوزن' },
-            { q: 'آن چیست که گردن دارد اما سر ندارد؟', a: 'کوزه' },
-            { q: 'آن چیست که روز را آغاز و شب را تمام می‌کند؟', a: 'ر' },
-            { q: 'آن چیست که همه جا هست ولی دیده نمی‌شود؟', a: 'هوا' },
-            { q: 'آن چیست که زبان ندارد اما سخن می‌گوید؟', a: 'کتاب' },
-            { q: 'آن چیست که پا ندارد ولی سفر می‌کند؟', a: 'نامه' },
-            { q: 'آن چیست که همیشه در حال آمدن است ولی هرگز نمی‌رسد؟', a: 'فردا' },
-            { q: 'آن چیست که در زمستان می‌ایستد و در تابستان می‌نشیند؟', a: 'برف' },
-            { q: 'آن چیست که در روز پر است و در شب خالی؟', a: 'کفش' },
-            { q: 'آن چیست که سفید است اما برف نیست، ریشه دارد اما درخت نیست؟', a: 'دندان' },
-            { q: 'آن چیست که اگر نامش را بگویی می‌شکند؟', a: 'سکوت' },
-            { q: 'آن چیست که می‌رود و برنمی‌گردد؟', a: 'عمر' },
-            { q: 'آن چیست که پر از سوراخ است ولی آب را نگه می‌دارد؟', a: 'اسفنج' },
-            { q: 'آن چیست که سر ندارد اما کلاه دارد؟', a: 'قارچ' },
-            { q: 'آن چیست که هر چه بیشتر می‌شوییم کثیف‌تر می‌شود؟', a: 'آب' },
-            { q: 'آن چیست که از میان آب می‌گذرد ولی خیس نمی‌شود؟', a: 'نور' },
-            { q: 'آن چیست که اگر غذا به او بدهی رشد می‌کند و اگر آب بدهی می‌میرد؟', a: 'آتش' },
-            { q: 'آن چیست که در قرن یک بار، در دقیقه دو بار و در ساعت هیچ بار نمی‌آید؟', a: 'ق' },
+            { q: 'آن چیست که پر دارد ولی پرواز نمی‌کند؟', a: 'بالش', options: ['پرنده', 'بالش', 'هواپیما', 'بادبادک'] },
+            { q: 'آن چیست که هرچه از آن بردارند بزرگتر می‌شود؟', a: 'گودال', options: ['کیسه', 'کوه', 'گودال', 'درخت'] },
+            { q: 'آن چیست که یک چشم دارد ولی نمی‌بیند؟', a: 'سوزن', options: ['سوزن', 'سیکلوپ', 'دوربین', 'هیولا'] },
+            { q: 'آن چیست که گردن دارد اما سر ندارد؟', a: 'کوزه', options: ['پیراهن', 'بطری', 'کوزه', 'شیشه'] },
+            { q: 'آن چیست که روز را آغاز و شب را تمام می‌کند؟', a: 'ر', options: ['آفتاب', 'ماه', 'ر', 'ش'] },
+            { q: 'آن چیست که همه جا هست ولی دیده نمی‌شود؟', a: 'هوا', options: ['صدا', 'هوا', 'فکر', 'عشق'] },
+            { q: 'آن چیست که زبان ندارد اما سخن می‌گوید؟', a: 'کتاب', options: ['رادیو', 'قلم', 'کتاب', 'نامه'] },
+            { q: 'آن چیست که پا ندارد ولی سفر می‌کند؟', a: 'نامه', options: ['ابر', 'دود', 'رودخانه', 'نامه'] },
+            { q: 'آن چیست که همیشه در حال آمدن است ولی هرگز نمی‌رسد؟', a: 'فردا', options: ['قطار', 'فردا', 'مرگ', 'خواب'] },
+            { q: 'آن چیست که در زمستان می‌ایستد و در تابستان می‌نشیند؟', a: 'برف', options: ['آدم برفی', 'کوه', 'یخ', 'برف'] },
+            { q: 'آن چیست که در روز پر است و در شب خالی؟', a: 'کفش', options: ['مدرسه', 'معده', 'خیابان', 'کفش'] },
+            { q: 'آن چیست که سفید است اما برف نیست، ریشه دارد اما درخت نیست؟', a: 'دندان', options: ['پیاز', 'دندان', 'تربچه', 'مو'] },
+            { q: 'آن چیست که اگر نامش را بگویی می‌شکند؟', a: 'سکوت', options: ['شیشه', 'سکوت', 'بغض', 'قول'] },
+            { q: 'آن چیست که می‌رود و برنمی‌گردد؟', a: 'عمر', options: ['زمان', 'جوانی', 'عمر', 'فرصت'] },
+            { q: 'آن چیست که پر از سوراخ است ولی آب را نگه می‌دارد؟', a: 'اسفنج', options: ['ابر', 'اسفنج', 'تور', 'آبکش'] },
+            { q: 'آن چیست که سر ندارد اما کلاه دارد؟', a: 'قارچ', options: ['میخ', 'بطری', 'خودکار', 'قارچ'] },
+            { q: 'آن چیست که هر چه بیشتر می‌شوییم کثیف‌تر می‌شود؟', a: 'آب', options: ['حوله', 'دستمال', 'آب', 'صابون'] },
+            { q: 'آن چیست که از میان آب می‌گذرد ولی خیس نمی‌شود؟', a: 'نور', options: ['صدا', 'سایه', 'نور', 'ماهی'] },
+            { q: 'آن چیست که اگر غذا به او بدهی رشد می‌کند و اگر آب بدهی می‌میرد؟', a: 'آتش', options: ['گیاه', 'آتش', 'کوره', 'حیوان'] },
+            { q: 'آن چیست که در قرن یک بار، در دقیقه دو بار و در ساعت هیچ بار نمی‌آید؟', a: 'ق', options: ['نقطه', 'حرف', 'ق', 'عدد'] },
         ];
 
         // --- Navigation ---
@@ -302,6 +329,7 @@
                     showScreen('mainMenu');
                     startFallingLetters();
                 } else {
+                    // Using a custom modal would be better, but alert is simpler for this example.
                     alert('لطفاً تمام فیلدها را پر کرده و با قوانین موافقت کنید.');
                 }
             });
@@ -386,12 +414,7 @@
         // --- Gameplay Logic ---
         function initGameplay() {
             document.getElementById('back-to-levels-btn').addEventListener('click', () => {
-                clearInterval(gameState.timerInterval);
                 showScreen('levelSelection');
-            });
-            document.getElementById('submit-answer-btn').addEventListener('click', submitAnswer);
-            document.getElementById('riddle-answer-input').addEventListener('keypress', (e) => {
-                if(e.key === 'Enter') submitAnswer();
             });
         }
         
@@ -403,6 +426,7 @@
             
             document.getElementById('game-level-number').textContent = levelNumber;
             document.getElementById('game-score').textContent = '0';
+            document.getElementById('game-progress-bar').style.width = '0%';
             
             showScreen('gameplay');
             loadNextRiddle();
@@ -419,52 +443,53 @@
                 return;
             }
 
+            const progress = (gameState.currentRiddleIndex / gameState.currentRiddles.length) * 100;
+            document.getElementById('game-progress-bar').style.width = `${progress}%`;
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
             const riddle = gameState.currentRiddles[gameState.currentRiddleIndex];
             document.getElementById('riddle-question').textContent = riddle.q;
-            document.getElementById('riddle-answer-input').value = '';
-            document.getElementById('riddle-answer-input').focus();
             
-            startTimer();
+            const shuffledOptions = [...riddle.options].sort(() => Math.random() - 0.5);
+
+            shuffledOptions.forEach(optionText => {
+                const button = document.createElement('button');
+                button.textContent = optionText;
+                button.className = 'btn-option text-lg';
+                button.onclick = () => checkAnswer(optionText, button);
+                optionsContainer.appendChild(button);
+            });
         }
         
-        function startTimer() {
-            clearInterval(gameState.timerInterval);
-            gameState.timeLeft = TIME_PER_RIDDLE;
-            const timerEl = document.getElementById('game-timer');
-            timerEl.textContent = gameState.timeLeft;
-            timerEl.parentElement.style.borderColor = '#FFD700';
+        function checkAnswer(selectedOption, buttonElement) {
+            const optionsContainer = document.getElementById('options-container');
+            Array.from(optionsContainer.children).forEach(btn => btn.disabled = true);
 
-            gameState.timerInterval = setInterval(() => {
-                gameState.timeLeft--;
-                timerEl.textContent = gameState.timeLeft;
-                if (gameState.timeLeft <= 3) {
-                     timerEl.parentElement.style.borderColor = '#ef4444'; // Red
-                }
-                if (gameState.timeLeft <= 0) {
-                    skipQuestion();
-                }
-            }, 1000);
-        }
-
-        function submitAnswer() {
-            clearInterval(gameState.timerInterval);
-            const userAnswer = document.getElementById('riddle-answer-input').value.trim();
             const correctAnswer = gameState.currentRiddles[gameState.currentRiddleIndex].a;
 
-            if (userAnswer === correctAnswer) {
+            if (selectedOption === correctAnswer) {
                 gameState.score++;
                 document.getElementById('game-score').textContent = gameState.score;
+                buttonElement.style.backgroundColor = 'rgba(74, 222, 128, 0.5)';
+                buttonElement.style.borderColor = '#4ade80';
+            } else {
+                buttonElement.style.backgroundColor = 'rgba(239, 68, 68, 0.5)';
+                buttonElement.style.borderColor = '#ef4444';
+                // Highlight the correct answer
+                Array.from(optionsContainer.children).forEach(btn => {
+                    if (btn.textContent === correctAnswer) {
+                        btn.style.backgroundColor = 'rgba(74, 222, 128, 0.5)';
+                        btn.style.borderColor = '#4ade80';
+                    }
+                });
             }
             
             gameState.currentRiddleIndex++;
-            loadNextRiddle();
-        }
-        
-        function skipQuestion() {
-            clearInterval(gameState.timerInterval);
-            // No points awarded
-            gameState.currentRiddleIndex++;
-            loadNextRiddle();
+            
+            setTimeout(() => {
+                loadNextRiddle();
+            }, 1500);
         }
 
         // --- Level End Logic ---
@@ -485,7 +510,6 @@
         }
         
         function endLevel() {
-            clearInterval(gameState.timerInterval);
             const correct = gameState.score;
             const wrong = gameState.currentRiddles.length - correct;
             
