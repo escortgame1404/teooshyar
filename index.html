@@ -186,7 +186,7 @@
         <footer class="w-full max-w-sm mx-auto pb-2 px-2">
             <div class="bg-black/30 backdrop-blur-sm border border-yellow-400/20 rounded-2xl grid grid-cols-3 gap-2 text-center p-2">
                 <button class="flex flex-col items-center justify-center text-gray-400 p-2 rounded-lg hover:bg-yellow-400/10 transition-colors text-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2_0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                     <span>فروشگاه</span>
                 </button>
                 <button class="flex flex-col items-center justify-center text-gray-400 p-2 rounded-lg hover:bg-yellow-400/10 transition-colors text-sm">
@@ -280,6 +280,7 @@
         // --- Game State & Data ---
         const TOTAL_LEVELS = 70;
         const RIDDLES_PER_LEVEL = 5;
+        const STORAGE_KEY = 'chistanGameState';
         
         let gameState = {
             username: '',
@@ -316,6 +317,30 @@
             { q: 'آن چیست که در قرن یک بار، در دقیقه دو بار و در ساعت هیچ بار نمی‌آید؟', a: 'ق', options: ['نقطه', 'حرف', 'ق', 'عدد'] },
         ];
         
+        // --- Persistence ---
+        function saveGameState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+            } catch (e) {
+                console.error("Failed to save game state:", e);
+            }
+        }
+
+        function loadGameState() {
+            try {
+                const savedState = localStorage.getItem(STORAGE_KEY);
+                if (savedState) {
+                    const loadedState = JSON.parse(savedState);
+                    gameState = { ...gameState, ...loadedState };
+                    return true;
+                }
+                return false;
+            } catch (e) {
+                console.error("Failed to load game state:", e);
+                return false;
+            }
+        }
+
         // --- Navigation ---
         function showScreen(screenName) {
             Object.values(screens).forEach(screen => screen.style.display = 'none');
@@ -341,6 +366,7 @@
                 if (username && age && termsCheckbox.checked) {
                     gameState.username = username;
                     gameState.age = age;
+                    saveGameState(); // Save state after successful registration
                     updateUI();
                     showScreen('mainMenu');
                     startFallingLetters();
@@ -545,6 +571,7 @@
                 if (gameState.currentLevel === gameState.unlockedLevel && gameState.unlockedLevel < TOTAL_LEVELS) {
                     gameState.unlockedLevel++;
                 }
+                saveGameState(); // Save progress after a successful level
             } else {
                 document.getElementById('level-end-title').textContent = 'شکست!';
                 document.getElementById('level-end-title').className = 'text-4xl font-black text-red-400';
@@ -566,7 +593,13 @@
             
             // Simple splash screen delay
             setTimeout(() => {
-                showScreen('onboarding');
+                if (loadGameState()) {
+                    updateUI();
+                    showScreen('mainMenu');
+                    startFallingLetters();
+                } else {
+                    showScreen('onboarding');
+                }
             }, 3000); // 3 second delay
         }
 
