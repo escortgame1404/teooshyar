@@ -3,916 +3,538 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بازی چیستان با ربات</title>
+    <title>بازی چیستان</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
         body {
             font-family: 'Vazirmatn', sans-serif;
-            background-color: #0A0A0A; /* مشکی تیره‌تر */
+            background-color: #121212;
             color: #E0E0E0;
-            overflow: hidden; /* جلوگیری از اسکرول */
+            overscroll-behavior: none;
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10+ and Edge */
+            user-select: none; /* Standard syntax */
         }
-        .golden-gradient {
-            background: linear-gradient(90deg, #FAD961, #F79521);
-            transition: all 0.3s ease-in-out;
+        .gold-gradient-text {
+            background: linear-gradient(90deg, #FFD700, #F0C040, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
         }
-        .golden-gradient:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(250, 217, 97, 0.4);
+        .gold-gradient-bg {
+            background: linear-gradient(145deg, #e6c229, #f0e68c, #d4af37);
+            border: 1px solid #FFD700;
         }
-        .golden-glow {
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-        }
-        .text-golden {
-            color: #F7D344;
-        }
-        .profile-card {
-            background-color: #1a1a1a;
-            border-radius: 12px;
-            padding: 16px;
-            border: 2px solid #333;
-            transition: transform 0.2s ease-in-out;
-            cursor: pointer;
-        }
-        .profile-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-        }
-        .button {
-            border-radius: 9999px;
-            padding: 12px 24px;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-            cursor: pointer;
+        .btn-golden {
+            background: linear-gradient(145deg, #c39d1a, #e6c229, #c39d1a);
+            color: #121212;
             font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 12px 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+            border: 1px solid #FFD700;
         }
-        .button:active {
-            transform: scale(0.95);
+        .btn-golden:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
         }
-        .navbar-icon {
-            filter: grayscale(100%);
+        .btn-golden:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.2);
         }
-        .active-navbar-icon {
-            filter: grayscale(0%);
+        .disabled-btn {
+            background: #4a4a4a;
+            color: #888;
+            cursor: not-allowed;
+            box-shadow: none;
+            border: 1px solid #555;
         }
-        .countdown-text {
-            font-variant-numeric: tabular-nums;
+        .card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 16px;
         }
-        .modal {
-            position: fixed;
+        .split-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(to right, #121212 50%, #FFD700 50%);
+            border: 2px solid #FFD700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        .screen {
+            display: none;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
+            overflow-y: auto;
+            animation: fadeIn 0.5s ease-in-out;
         }
-        .modal-content {
-            background-color: #1a1a1a;
-            padding: 24px;
-            border-radius: 12px;
-            text-align: center;
-            width: 90%;
-            max-width: 450px;
-            animation: fadeInScale 0.3s ease-out;
-            box-shadow: 0 0 30px rgba(250, 217, 97, 0.4);
-        }
-
-        /* انیمیشن برای ذره‌بین در صفحه جستجو */
-        @keyframes pulse-rotate {
-            0% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.1) rotate(15deg); }
-            100% { transform: scale(1) rotate(0deg); }
-        }
-        .magnifying-glass-animated {
-            animation: pulse-rotate 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        /* انیمیشن برای ورودی/خروجی پنل‌ها */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .panel-enter {
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.9); }
+            from { opacity: 0; transform: scale(0.98); }
             to { opacity: 1; transform: scale(1); }
         }
-
-        /* انیمیشن موشن‌گرافیک برای آمار پروفایل */
-        @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .stat-item {
-            animation: slideInUp 0.5s ease-out;
-        }
-        
-        .stat-item:nth-child(1) { animation-delay: 0.1s; }
-        .stat-item:nth-child(2) { animation-delay: 0.2s; }
-        .stat-item:nth-child(3) { animation-delay: 0.3s; }
-        .stat-item:nth-child(4) { animation-delay: 0.4s; }
-        .stat-item:nth-child(5) { animation-delay: 0.5s; }
-
-        /* --- افکت جدید ریزش حروف --- */
-        .falling-letters-bg {
+        #falling-letters-canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden;
-            z-index: -1; /* قرار گرفتن در پشت محتوا */
+            z-index: -1;
+            opacity: 0.15;
         }
-        .falling-letter {
-            position: absolute;
-            font-size: 1.5rem;
-            color: rgba(255, 255, 255, 0.1);
-            animation: fall linear infinite;
+        .level-icon {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #FFD700;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
         }
-
-        @keyframes fall {
-            from { transform: translateY(-100vh) rotate(0deg); opacity: 0; }
-            50% { opacity: 1; }
-            to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        .level-icon.unlocked {
+            background: linear-gradient(145deg, #c39d1a, #e6c229);
+            color: #121212;
+            cursor: pointer;
         }
-
-        /* حذف افکت طلایی قدیمی */
-        .main-menu-bg {
-            /* این کلاس اکنون فقط برای استایل دهی به flexbox استفاده می‌شود */
+        .level-icon.completed {
+            background: linear-gradient(145deg, #50c878, #75e09a);
+            border-color: #50c878;
+            color: white;
+            cursor: pointer;
+        }
+        .level-icon.locked {
+            background: #333;
+            color: #777;
+            border-color: #555;
+            box-shadow: none;
         }
     </style>
 </head>
-<body class="bg-[#0A0A0A] flex items-center justify-center min-h-screen p-4">
+<body class="overflow-hidden">
 
-<div id="app" class="w-full max-w-sm mx-auto flex flex-col items-center"></div>
-
-<script>
-    // Game data and state management
-    const gameData = {
-        // افزودن آمار بازی آنلاین به شیء کاربر
-        user: { name: '', age: 0, cups: 0, onlineWins: 0, onlineLosses: 0, totalBans: 0 },
-        botNames: ["فاطمه حسینی", "مهتاب جلالی", "Alixc", "a_p_12", "Aria_P24", "MinaK", "Laleh98", "نیما رحیمی", "نرگس راد", "RoyaG"],
-        // افزودن آمار ساختگی برای ربات
-        bot: { name: '', cups: 0, onlineWins: 0, onlineLosses: 0 },
-        topics: ["سینما", "اطلاعات عمومی", "تاریخ و جغرافیا", "موسیقی و فرهنگ", "علمی و تکنولوژی"],
-        questions: {
-            "سینما": [
-                { q: "فیلم 'جدایی نادر از سیمین' برنده چه جایزه‌ای شد؟", a: "اسکار", options: ["نخل طلا", "اسکار", "گلدن گلوب", "بافتا"] },
-                { q: "کارگردان سه‌گانه 'پدرخوانده' کیست؟", a: "فرانسیس فورد کاپولا", options: ["مارتین اسکورسیزی", "استنلی کوبریک", "فرانسیس فورد کاپولا", "استیون اسپیلبرگ"] },
-                { q: "کدام بازیگر به عنوان 'مرلین مونرو' سینمای ایران شناخته می‌شود؟", a: "فروزان", options: ["فروزان", "گوگوش", "لیلا فروهر", "سوسن"] },
-                { q: "بازیگر نقش اصلی فیلم 'پاپیون' کیست؟", a: "استیو مک‌کوئین", options: ["آل پاچینو", "استیو مک‌کوئین", "داستین هافمن", "ژان گابن"] },
-            ],
-            "اطلاعات عمومی": [
-                { q: "کوچک‌ترین کشور جهان کدام است؟", a: "واتیکان", options: ["واتیکان", "موناکو", "سن مارینو", "نائورو"] },
-                { q: "نام واحد پول ژاپن چیست؟", a: "ین", options: ["وون", "ین", "یوآن", "بات"] },
-                { q: "نام تنها قاره‌ای که هیچ رودخانه‌ای ندارد چیست؟", a: "قطب جنوب", options: ["آفریقا", "استرالیا", "قطب جنوب", "اروپا"] },
-                { q: "کدام حیوان در شب قادر به دیدن در تاریکی مطلق است؟", a: "هیچ حیوانی", options: ["جغد", "گربه", "هیچ حیوانی", "خفاش"] },
-            ],
-            "تاریخ و جغرافیا": [
-                { q: "کدام کشور در آمریکای جنوبی قرار ندارد؟", a: "پرتغال", options: ["پرتغال", "برزیل", "شیلی", "آرژانتین"] },
-                { q: "مهمترین بنای تاریخی شهر رم کدام است؟", a: "کولوسئوم", options: ["پانتئون", "کولوسئوم", "برج پیزا", "فروم روم"] },
-                { q: "مخترع لامپ کیست؟", a: "توماس ادیسون", options: ["نیکولا تسلا", "توماس ادیسون", "الکساندر گراهام بل", "مایکل فارادی"] },
-                { q: "نام طولانی‌ترین رودخانه در جهان چیست؟", a: "نیل", options: ["آمازون", "نیل", "یانگ‌تسه", "میسیسیپی"] },
-            ],
-            "موسیقی و فرهنگ": [
-                { q: "کدام ساز از خانواده سازهای بادی برنجی است؟", a: "ترومپت", options: ["فلوت", "کلارینت", "ترومپت", "ویولن"] },
-                { q: "نام نقاش مشهور 'مونالیزا' چیست؟", a: "لئوناردو داوینچی", options: ["ونسان ون‌گوگ", "لئوناردو داوینچی", "پابلو پیکاسو", "رافائل"] },
-                { q: "نام مشهورترین اثر ویلیام شکسپیر چیست؟", a: "هملت", options: ["اتللو", "مکبث", "هملت", "رومئو و ژولیت"] },
-                { q: "نام کامل شاعر بزرگ ایرانی، حافظ، چیست؟", a: "خواجه شمس‌الدین محمد", options: ["ابوالقاسم فردوسی", "جلال‌الدین محمد بلخی", "خواجه شمس‌الدین محمد", "سعدی"] },
-            ],
-            "علمی و تکنولوژی": [
-                { q: "نام عنصری که عدد اتمی آن ۷۹ است چیست؟", a: "طلا", options: ["نقره", "طلا", "پلاتین", "مس"] },
-                { q: "کدام سیاره به عنوان 'سیاره سرخ' شناخته می‌شود؟", a: "مریخ", options: ["مریخ", "ناهید", "مشتری", "عطارد"] },
-                { q: "چه چیزی در اطراف خورشید می‌گردد؟", a: "زمین", options: ["ماه", "ستاره دنباله‌دار", "زمین", "شهاب‌سنگ"] },
-                { q: "کوچک‌ترین واحد سازنده ماده چیست؟", a: "اتم", options: ["مولکول", "اتم", "کوارک", "پروتون"] },
-            ]
-        },
-        game: {
-            screen: 'onboarding',
-            isOnlineMode: false,
-            currentRound: 0,
-            playerScore: 0,
-            botScore: 0,
-            totalQuestions: 0,
-            playerCorrect: 0,
-            botCorrect: 0,
-            currentQuestionIndex: 0,
-            currentTopic: '',
-            questionInterval: null,
-            roundTimer: null,
-            intervalTimer: null,
-        }
-    };
-    
-    // Ban constants and logic
-    const BAN_DURATION_MS = 60 * 1000; // 1 دقیقه در میلی‌ثانیه
-    const BAN_KEY = 'onlineBanTimestamp';
-
-    function getRemainingBanTime() {
-        const banTimestamp = localStorage.getItem(BAN_KEY);
-        if (!banTimestamp) {
-            return 0;
-        }
-        const elapsedTime = Date.now() - parseInt(banTimestamp);
-        return Math.max(0, BAN_DURATION_MS - elapsedTime);
-    }
-
-    // Modal to replace alert()
-    function renderModal(message, withButton = true, callback = null) {
-        const modalId = 'dynamic-modal';
-        const existingModal = document.getElementById(modalId);
-        if (existingModal) {
-            existingModal.remove();
-        }
-
-        const modalDiv = document.createElement('div');
-        modalDiv.id = modalId;
-        modalDiv.className = 'modal';
-
-        let buttonHtml = '';
-        if (withButton) {
-            buttonHtml = `<button id="modal-close" class="button golden-gradient text-gray-900 mt-6 w-full">باشه</button>`;
-        }
-
-        modalDiv.innerHTML = `
-            <div class="modal-content golden-glow">
-                <p class="text-white text-lg">${message}</p>
-                ${buttonHtml}
+    <!-- Onboarding Screen -->
+    <div id="onboarding-screen" class="screen p-8 flex flex-col justify-center items-center h-screen">
+        <div class="w-full max-w-sm text-center">
+            <h1 class="text-4xl font-black gold-gradient-text mb-8">به چیستان خوش آمدید</h1>
+            <div class="space-y-6">
+                <input id="username-input" type="text" placeholder="نام کاربری" class="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                <input id="age-input" type="number" placeholder="سن" class="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                <div class="flex items-center justify-center space-x-2 space-x-reverse">
+                    <input id="terms-checkbox" type="checkbox" class="h-5 w-5 bg-gray-700 border-gray-500 rounded text-yellow-500 focus:ring-yellow-500">
+                    <label for="terms-checkbox" class="text-gray-300">با تمامی قوانین موافقم</label>
+                </div>
+                <button id="onboarding-continue-btn" class="w-full btn-golden text-lg">ادامه</button>
             </div>
-        `;
-        document.body.appendChild(modalDiv);
+        </div>
+    </div>
 
-        if (withButton) {
-            document.getElementById('modal-close').addEventListener('click', () => {
-                modalDiv.remove();
-                if (callback) callback();
+    <!-- Main Menu Screen -->
+    <div id="main-menu-screen" class="screen p-6 flex flex-col h-screen">
+        <canvas id="falling-letters-canvas"></canvas>
+        <header class="flex justify-between items-center mb-16">
+            <div class="flex items-center space-x-4 space-x-reverse">
+                <div class="split-circle"></div>
+                <div>
+                    <p id="menu-username" class="font-bold text-lg text-white"></p>
+                    <p id="menu-trophy-count" class="text-sm gold-gradient-text font-bold">🏆 0</p>
+                </div>
+            </div>
+            <button id="settings-btn" class="text-3xl">⚙️</button>
+        </header>
+
+        <main class="flex-grow flex flex-col justify-center items-center space-y-6">
+            <button id="start-game-btn" class="w-full max-w-xs btn-golden text-2xl py-4">شروع بازی</button>
+            <button class="w-full max-w-xs disabled-btn text-2xl py-4">
+                بازی آنلاین <span class="text-xs">(به زودی)</span>
+            </button>
+        </main>
+
+        <footer class="grid grid-cols-3 gap-4 text-center">
+            <button class="text-gray-400">فروشگاه</button>
+            <button class="text-gray-400">چالش‌ها</button>
+            <button class="text-gray-400">تاریخچه</button>
+        </footer>
+    </div>
+    
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+        <div class="card p-8 rounded-lg w-11/12 max-w-md text-center space-y-4">
+            <h2 class="text-2xl font-bold gold-gradient-text mb-6">تنظیمات</h2>
+            <button class="w-full p-3 bg-gray-700 rounded-lg">کد هدیه</button>
+            <button class="w-full p-3 bg-gray-700 rounded-lg">سازندگان</button>
+            <button class="w-full p-3 bg-gray-700 rounded-lg">پشتیبانی</button>
+            <button id="close-settings-btn" class="mt-6 w-full btn-golden">بستن</button>
+        </div>
+    </div>
+
+    <!-- Level Selection Screen -->
+    <div id="level-selection-screen" class="screen p-6">
+        <header class="flex items-center justify-between mb-8">
+            <button id="back-to-menu-btn" class="text-3xl">➡️</button>
+            <h1 class="text-3xl font-bold gold-gradient-text">فصل اول</h1>
+            <div class="w-8"></div>
+        </header>
+        <div id="level-grid" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-4">
+            <!-- Level icons will be generated here -->
+        </div>
+    </div>
+
+    <!-- Gameplay Screen -->
+    <div id="gameplay-screen" class="screen p-6 flex flex-col h-screen">
+        <header class="flex items-center justify-between mb-4">
+             <button id="back-to-levels-btn" class="text-3xl">➡️</button>
+            <div class="text-center">
+                <p class="text-lg">مرحله <span id="game-level-number"></span></p>
+                <p class="text-2xl font-bold gold-gradient-text">امتیاز: <span id="game-score">0</span></p>
+            </div>
+            <div id="game-timer-container" class="w-16 h-16 flex items-center justify-center rounded-full border-4 border-yellow-400">
+                <span id="game-timer" class="text-2xl font-bold">10</span>
+            </div>
+        </header>
+        
+        <main class="flex-grow flex flex-col justify-center items-center text-center">
+            <div class="w-full max-w-lg card p-8">
+                <p id="riddle-question" class="text-xl md:text-2xl mb-8 min-h-[100px]"></p>
+                <input id="riddle-answer-input" type="text" placeholder="پاسخ خود را بنویسید..." class="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            </div>
+        </main>
+        
+        <footer class="mt-4 text-center">
+            <button id="submit-answer-btn" class="w-full max-w-xs btn-golden text-lg">ثبت پاسخ</button>
+        </footer>
+    </div>
+    
+    <!-- Level End Screen -->
+    <div id="level-end-screen" class="screen p-8 flex flex-col justify-center items-center text-center h-screen">
+        <div class="card p-8 rounded-lg w-11/12 max-w-md space-y-6">
+            <h2 id="level-end-title" class="text-4xl font-black"></h2>
+            <div>
+                <p class="text-xl">پاسخ‌های درست: <span id="correct-answers" class="text-green-400 font-bold"></span></p>
+                <p class="text-xl">پاسخ‌های غلط: <span id="wrong-answers" class="text-red-400 font-bold"></span></p>
+            </div>
+            <div class="flex space-x-4 space-x-reverse">
+                <button id="retry-level-btn" class="w-full btn-golden bg-gray-600 border-gray-500">تلاش مجدد</button>
+                <button id="next-level-btn" class="w-full btn-golden">مرحله بعد</button>
+            </div>
+             <button id="end-back-to-levels-btn" class="mt-4 w-full p-3 bg-gray-700 rounded-lg">بازگشت به لیست مراحل</button>
+        </div>
+    </div>
+
+
+    <script>
+        // --- DOM Elements ---
+        const screens = {
+            onboarding: document.getElementById('onboarding-screen'),
+            mainMenu: document.getElementById('main-menu-screen'),
+            levelSelection: document.getElementById('level-selection-screen'),
+            gameplay: document.getElementById('gameplay-screen'),
+            levelEnd: document.getElementById('level-end-screen'),
+        };
+        const settingsModal = document.getElementById('settings-modal');
+
+        // --- Game State & Data ---
+        const TOTAL_LEVELS = 70;
+        const RIDDLES_PER_LEVEL = 5;
+        const TIME_PER_RIDDLE = 10; // seconds
+
+        let gameState = {
+            username: '',
+            age: null,
+            trophies: 0,
+            unlockedLevel: 1,
+            completedLevels: [],
+            currentLevel: 1,
+            currentRiddles: [],
+            currentRiddleIndex: 0,
+            score: 0,
+            timerInterval: null,
+            timeLeft: TIME_PER_RIDDLE,
+        };
+
+        const allRiddles = [
+            { q: 'آن چیست که پر دارد ولی پرواز نمی‌کند؟', a: 'بالش' },
+            { q: 'آن چیست که هرچه از آن بردارند بزرگتر می‌شود؟', a: 'گودال' },
+            { q: 'آن چیست که یک چشم دارد ولی نمی‌بیند؟', a: 'سوزن' },
+            { q: 'آن چیست که گردن دارد اما سر ندارد؟', a: 'کوزه' },
+            { q: 'آن چیست که روز را آغاز و شب را تمام می‌کند؟', a: 'ر' },
+            { q: 'آن چیست که همه جا هست ولی دیده نمی‌شود؟', a: 'هوا' },
+            { q: 'آن چیست که زبان ندارد اما سخن می‌گوید؟', a: 'کتاب' },
+            { q: 'آن چیست که پا ندارد ولی سفر می‌کند؟', a: 'نامه' },
+            { q: 'آن چیست که همیشه در حال آمدن است ولی هرگز نمی‌رسد؟', a: 'فردا' },
+            { q: 'آن چیست که در زمستان می‌ایستد و در تابستان می‌نشیند؟', a: 'برف' },
+            { q: 'آن چیست که در روز پر است و در شب خالی؟', a: 'کفش' },
+            { q: 'آن چیست که سفید است اما برف نیست، ریشه دارد اما درخت نیست؟', a: 'دندان' },
+            { q: 'آن چیست که اگر نامش را بگویی می‌شکند؟', a: 'سکوت' },
+            { q: 'آن چیست که می‌رود و برنمی‌گردد؟', a: 'عمر' },
+            { q: 'آن چیست که پر از سوراخ است ولی آب را نگه می‌دارد؟', a: 'اسفنج' },
+            { q: 'آن چیست که سر ندارد اما کلاه دارد؟', a: 'قارچ' },
+            { q: 'آن چیست که هر چه بیشتر می‌شوییم کثیف‌تر می‌شود؟', a: 'آب' },
+            { q: 'آن چیست که از میان آب می‌گذرد ولی خیس نمی‌شود؟', a: 'نور' },
+            { q: 'آن چیست که اگر غذا به او بدهی رشد می‌کند و اگر آب بدهی می‌میرد؟', a: 'آتش' },
+            { q: 'آن چیست که در قرن یک بار، در دقیقه دو بار و در ساعت هیچ بار نمی‌آید؟', a: 'ق' },
+        ];
+
+        // --- Navigation ---
+        function showScreen(screenName) {
+            Object.values(screens).forEach(screen => screen.style.display = 'none');
+            screens[screenName].style.display = 'flex';
+        }
+
+        // --- Onboarding Logic ---
+        function initOnboarding() {
+            const continueBtn = document.getElementById('onboarding-continue-btn');
+            const usernameInput = document.getElementById('username-input');
+            const ageInput = document.getElementById('age-input');
+            const termsCheckbox = document.getElementById('terms-checkbox');
+
+            continueBtn.addEventListener('click', () => {
+                const username = usernameInput.value.trim();
+                const age = ageInput.value;
+                if (username && age && termsCheckbox.checked) {
+                    gameState.username = username;
+                    gameState.age = age;
+                    document.getElementById('menu-username').textContent = gameState.username;
+                    showScreen('mainMenu');
+                    startFallingLetters();
+                } else {
+                    alert('لطفاً تمام فیلدها را پر کرده و با قوانین موافقت کنید.');
+                }
             });
         }
-    }
 
-    // Function to show profile modal
-    function renderProfileModal() {
-        renderModal(`
-            <div class="flex flex-col items-center">
-                <h2 class="text-3xl font-bold text-golden mb-4">پروفایل کاربری</h2>
-                <div class="profile-card-content w-full flex flex-col space-y-4 text-left">
-                    <div class="flex justify-between items-center stat-item">
-                        <span class="text-gray-400">نام:</span>
-                        <span class="text-white font-bold">${gameData.user.name}</span>
-                    </div>
-                    <div class="flex justify-between items-center stat-item">
-                        <span class="text-gray-400">سن:</span>
-                        <span class="text-white font-bold">${gameData.user.age}</span>
-                    </div>
-                    <div class="flex justify-between items-center stat-item">
-                        <span class="text-gray-400">کاپ‌ها:</span>
-                        <span class="text-golden font-bold">${gameData.user.cups}</span>
-                    </div>
-                    <hr class="border-gray-700">
-                    <div class="flex justify-between items-center stat-item">
-                        <span class="text-gray-400">تعداد برد آنلاین:</span>
-                        <span class="text-green-400 font-bold">${gameData.user.onlineWins}</span>
-                    </div>
-                    <div class="flex justify-between items-center stat-item">
-                        <span class="text-gray-400">تعداد باخت آنلاین:</span>
-                        <span class="text-red-400 font-bold">${gameData.user.onlineLosses}</span>
-                    </div>
-                    <div class="flex justify-between items-center stat-item">
-                        <span class="text-gray-400">دفعات بن شدن:</span>
-                        <span class="text-red-500 font-bold">${gameData.user.totalBans}</span>
-                    </div>
-                </div>
-            </div>
-        `);
-    }
-
-    // The main render function
-    function renderScreen() {
-        const app = document.getElementById('app');
-        app.classList.remove('panel-enter');
-        void app.offsetWidth; // Force reflow to restart animation
-        app.innerHTML = '';
-        // حذف افکت پس‌زمینه قدیمی
-        app.classList.remove('main-menu-bg');
-
-        switch (gameData.game.screen) {
-            case 'onboarding':
-                renderOnboarding();
-                break;
-            case 'mainMenu':
-                renderMainMenu();
-                break;
-            case 'onlineSearching':
-                renderOnlineSearching();
-                break;
-            case 'opponentFound':
-                renderOpponentFound();
-                break;
-            case 'game':
-                renderGame();
-                break;
-            case 'endGame':
-                renderEndGame();
-                break;
-            case 'settings':
-                renderSettings();
-                break;
-            case 'navbarPlaceholder':
-                renderPlaceholder();
-                break;
-            case 'banPanel':
-                renderBanPanel();
-                break;
-        }
-        app.classList.add('panel-enter');
-    }
-
-    // Onboarding screen
-    function renderOnboarding() {
-        const app = document.getElementById('app');
-        app.innerHTML = `
-            <div class="card w-full p-6 space-y-6 bg-[#1a1a1a] rounded-xl golden-glow">
-                <h1 class="text-3xl font-bold text-center text-golden">ورود</h1>
-                <div class="flex flex-col space-y-4">
-                    <input id="username" type="text" placeholder="نام کاربری" class="p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-golden">
-                    <input id="age" type="number" placeholder="سن" class="p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-golden">
-                </div>
-                <label class="flex items-center space-x-2 space-x-reverse text-sm cursor-pointer">
-                    <input type="checkbox" id="agree" class="h-4 w-4 rounded text-golden-glow focus:ring-golden">
-                    <span class="text-gray-400">با تمامی قوانین موافقم.</span>
-                </label>
-                <button id="onboarding-continue" class="button w-full golden-gradient text-gray-900 font-bold">
-                    ادامه
-                </button>
-            </div>
-        `;
-        document.getElementById('onboarding-continue').addEventListener('click', () => {
-            const username = document.getElementById('username').value.trim();
-            const age = parseInt(document.getElementById('age').value);
-            const agree = document.getElementById('agree').checked;
-
-            if (username && age && agree) {
-                gameData.user.name = username;
-                gameData.user.age = age;
-                gameData.game.screen = 'mainMenu';
-                renderScreen();
-            } else {
-                renderModal('لطفاً تمامی فیلدها را پر کنید و با قوانین موافقت نمایید.');
-            }
-        });
-    }
-
-    // تابع جدید برای ایجاد افکت ریزش حروف
-    function startFallingLetters(containerId) {
-        const container = document.getElementById(containerId);
-        const chars = 'ابپتثجچحخدذرزژسشصضطظعغفقکگلمنوهی';
-        const numLetters = 50;
-
-        for (let i = 0; i < numLetters; i++) {
-            const letter = document.createElement('div');
-            letter.className = 'falling-letter';
-            letter.textContent = chars[Math.floor(Math.random() * chars.length)];
-            
-            letter.style.left = `${Math.random() * 100}vw`;
-            letter.style.animationDuration = `${Math.random() * 5 + 5}s`;
-            letter.style.animationDelay = `-${Math.random() * 5}s`;
-            
-            container.appendChild(letter);
-        }
-    }
-
-    // Main menu screen
-    function renderMainMenu() {
-        const app = document.getElementById('app');
-        // اضافه کردن کانتینر برای حروف
-        app.innerHTML = `
-            <div id="falling-letters-container" class="falling-letters-bg"></div>
-            <div class="w-full h-screen flex flex-col items-center justify-between">
-                <!-- Top Bar -->
-                <div class="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-4 py-4">
-                    <div id="settings-btn" class="p-2 cursor-pointer transition-transform duration-200 hover:rotate-45">
-                        <svg class="h-8 w-8 text-golden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.82 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.82 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.82-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.82-3.31 2.37-2.37.525.265 1.127.398 1.729.398h.001z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </div>
-                    <div id="user-profile-btn" class="flex items-center space-x-2 space-x-reverse profile-card">
-                        <div class="flex flex-col items-end">
-                            <span class="text-sm font-bold text-gray-200">${gameData.user.name}</span>
-                            <span class="text-xs text-golden">${gameData.user.cups} کاپ</span>
-                        </div>
-                        <svg class="h-8 w-8 text-golden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7.962 7.962 0 0112 15c2.446 0 4.717.966 6.439 2.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Main Buttons -->
-                <div class="flex flex-col space-y-6 w-full items-center justify-center h-full">
-                    <button id="online-btn" class="button w-3/4 text-xl bg-[#2e2e2e] text-golden golden-glow">
-                        بازی آنلاین
-                    </button>
-                    <button id="start-btn" class="button w-3/4 text-xl golden-gradient text-gray-900 golden-glow">
-                        شروع بازی
-                    </button>
-                </div>
-                
-                <!-- Bottom Navbar -->
-                <div class="fixed bottom-0 right-0 w-full flex justify-around bg-[#1a1a1a] rounded-t-2xl p-4 golden-glow">
-                    <div id="store-btn" class="flex flex-col items-center cursor-pointer">
-                        <svg class="w-6 h-6 text-golden navbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.183 1.727.707 1.727H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        <span class="text-xs mt-1 text-gray-400">فروشگاه</span>
-                    </div>
-                    <div id="challenges-btn" class="flex flex-col items-center cursor-pointer">
-                        <svg class="w-6 h-6 text-golden navbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M10 16h.01" />
-                        </svg>
-                        <span class="text-xs mt-1 text-gray-400">چالش‌ها</span>
-                    </div>
-                    <div id="history-btn" class="flex flex-col items-center cursor-pointer">
-                        <svg class="w-6 h-6 text-golden navbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-xs mt-1 text-gray-400">تاریخچه</span>
-                    </div>
-                </div>
-            </div>
-        `;
-        // فراخوانی تابع برای شروع ریزش حروف
-        startFallingLetters('falling-letters-container');
-
-        document.getElementById('user-profile-btn').addEventListener('click', renderProfileModal);
-        document.getElementById('settings-btn').addEventListener('click', () => {
-            gameData.game.screen = 'settings';
-            renderScreen();
-        });
-        document.getElementById('start-btn').addEventListener('click', () => {
-            gameData.game.isOnlineMode = false;
-            gameData.game.screen = 'game';
-            resetGame();
-            renderScreen();
-        });
-        document.getElementById('online-btn').addEventListener('click', () => {
-            const remainingBanTime = getRemainingBanTime();
-            if (remainingBanTime > 0) {
-                gameData.game.screen = 'banPanel';
-                renderScreen();
-            } else {
-                gameData.game.isOnlineMode = true;
-                gameData.game.screen = 'onlineSearching';
-                renderScreen();
-            }
-        });
-        document.getElementById('store-btn').addEventListener('click', () => {
-            renderModal('این صفحه هنوز پیاده‌سازی نشده است.');
-        });
-        document.getElementById('challenges-btn').addEventListener('click', () => {
-            renderModal('این صفحه هنوز پیاده‌سازی نشده است.');
-        });
-        document.getElementById('history-btn').addEventListener('click', () => {
-            renderModal('این صفحه هنوز پیاده‌سازی نشده است.');
-        });
-    }
-
-    // Searching for online opponent screen
-    function renderOnlineSearching() {
-        const app = document.getElementById('app');
-        app.innerHTML = `
-            <div class="flex flex-col items-center justify-center h-full space-y-8">
-                <svg class="h-24 w-24 text-golden magnifying-glass-animated" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <p class="text-lg text-gray-400">در حال جستجوی حریف...</p>
-            </div>
-        `;
-        setTimeout(() => {
-            // منطق جدید برای انتخاب حریف با کاپ مشابه یا کمی بیشتر
-            const randomBotName = gameData.botNames[Math.floor(Math.random() * gameData.botNames.length)];
-            gameData.bot.name = randomBotName;
-            gameData.bot.cups = gameData.user.cups + Math.floor(Math.random() * 5); // کاپ پلیر + 0 تا 4
-            gameData.bot.onlineWins = Math.floor(Math.random() * 50);
-            gameData.bot.onlineLosses = Math.floor(Math.random() * 20);
-            
-            gameData.game.screen = 'opponentFound';
-            renderScreen();
-        }, 3000);
-    }
-    
-    // صفحه جدید برای نمایش اطلاعات حریف
-    function renderOpponentFound() {
-        const app = document.getElementById('app');
-        app.innerHTML = `
-            <div class="modal-content golden-glow">
-                <h2 class="text-2xl font-bold text-golden mb-4">حریف پیدا شد!</h2>
-                <div class="flex flex-col items-center w-full space-y-4 text-center">
-                    <svg class="h-16 w-16 text-golden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7.962 7.962 0 0112 15c2.446 0 4.717.966 6.439 2.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span class="text-xl font-bold text-white">${gameData.bot.name}</span>
-                    <span class="text-golden font-bold">${gameData.bot.cups} کاپ</span>
-                </div>
-                <div class="mt-6 flex justify-between w-full text-lg">
-                    <div class="flex flex-col items-center">
-                        <span class="text-green-400 font-bold">${gameData.bot.onlineWins}</span>
-                        <span class="text-gray-400 text-sm">برد</span>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <span class="text-red-400 font-bold">${gameData.bot.onlineLosses}</span>
-                        <span class="text-gray-400 text-sm">باخت</span>
-                    </div>
-                </div>
-                <button id="start-online-game-btn" class="button golden-gradient text-gray-900 mt-6 w-full">
-                    شروع بازی
-                </button>
-            </div>
-        `;
-        document.getElementById('start-online-game-btn').addEventListener('click', () => {
-            gameData.game.screen = 'game';
-            resetGame();
-            renderScreen();
-        });
-    }
-
-    // Game screen with new UI
-    function renderGame() {
-        const app = document.getElementById('app');
-        const topic = gameData.topics[gameData.game.currentRound];
-        const question = gameData.game.currentQuestion;
-        app.innerHTML = `
-            <div class="w-full h-screen flex flex-col justify-between">
-                <!-- Top Bar with Player and Opponent Avatars -->
-                <div class="flex justify-between items-center w-full p-4 mb-4">
-                    <!-- Bot/Opponent Profile (Left) -->
-                    <div class="flex items-center space-x-2 profile-card">
-                        <svg class="h-8 w-8 text-golden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7.962 7.962 0 0112 15c2.446 0 4.717.966 6.439 2.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <div class="flex flex-col items-start">
-                            <span class="text-sm font-bold text-gray-200">${gameData.game.isOnlineMode ? gameData.bot.name : 'ربات'}</span>
-                            <span class="text-xs text-golden">${gameData.game.isOnlineMode ? gameData.bot.cups + ' کاپ' : 'حالت آفلاین'}</span>
-                        </div>
-                    </div>
-
-                    <!-- Timer and Score -->
-                    <div class="flex flex-col items-center space-y-2">
-                        <span class="text-2xl font-bold text-white countdown-text" id="round-timer">۴۰</span>
-                        <div class="flex space-x-4 space-x-reverse text-sm font-bold">
-                            <span class="text-green-400">شما: ${gameData.game.playerCorrect}</span>
-                            <span class="text-red-400">حریف: ${gameData.game.botCorrect}</span>
-                        </div>
-                    </div>
-
-                    <!-- User Profile (Right) -->
-                    <div id="user-profile-game-btn" class="flex items-center space-x-2 space-x-reverse profile-card">
-                        <div class="flex flex-col items-end">
-                            <span class="text-sm font-bold text-gray-200">${gameData.user.name}</span>
-                            <span class="text-xs text-golden">${gameData.user.cups} کاپ</span>
-                        </div>
-                        <svg class="h-8 w-8 text-golden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7.962 7.962 0 0112 15c2.446 0 4.717.966 6.439 2.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Game Content and Question Card -->
-                <div class="flex flex-col items-center flex-grow justify-center w-full px-4">
-                    <!-- Question Card -->
-                    <div id="question-card" class="card w-full flex flex-col items-center p-6 golden-glow bg-[#1a1a1a] rounded-xl" style="display:none;">
-                        <span class="text-sm text-gray-400 mb-2">موضوع: ${topic} | راند ${gameData.game.currentRound + 1} از ۳</span>
-                        <p id="question-text" class="text-center text-xl font-semibold mb-6">${question ? question.q : ''}</p>
-                        
-                        <!-- Options Grid -->
-                        <div class="grid grid-cols-2 gap-4 w-full">
-                            ${question ? question.options.map((opt, i) => `
-                                <button class="option-btn button bg-[#2e2e2e] text-white" data-answer="${opt}">
-                                    ${opt}
-                                </button>
-                            `).join('') : ''}
-                        </div>
-                    </div>
-
-                    <!-- Round Intro -->
-                    <div id="round-intro" class="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-80 z-20 transition-opacity duration-500">
-                        <h2 class="text-2xl font-bold text-white mb-4">موضوع: ${topic}</h2>
-                        <p class="text-lg text-gray-400">شروع بازی در...</p>
-                        <p id="interval-countdown" class="text-5xl text-golden font-bold mt-2 countdown-text">۳</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Back Button and Exit Modal -->
-            <button id="back-btn" class="absolute top-4 left-4 p-2 cursor-pointer z-50 transition-transform duration-200 hover:scale-110">
-                <svg class="h-8 w-8 text-golden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-            </button>
-        `;
-        document.querySelectorAll('.option-btn').forEach(button => {
-            button.addEventListener('click', handleAnswer);
-        });
-        document.getElementById('back-btn').addEventListener('click', handleGameExit);
-        document.getElementById('user-profile-game-btn').addEventListener('click', renderProfileModal);
-
-        startRoundInterval();
-    }
-    
-    // End game screen
-    function renderEndGame() {
-        const app = document.getElementById('app');
-        const winnerText = gameData.game.isOnlineMode
-            ? (gameData.game.playerCorrect > gameData.game.botCorrect ? 'شما برنده شدید!' : (gameData.game.playerCorrect < gameData.game.botCorrect ? 'حریف برنده شد.' : 'بازی مساوی شد.'))
-            : 'بازی به پایان رسید.';
-
-        app.innerHTML = `
-            <div class="card w-full p-6 space-y-6 text-center golden-glow bg-[#1a1a1a] rounded-xl">
-                <h2 class="text-2xl font-bold text-golden">${winnerText}</h2>
-                ${gameData.game.isOnlineMode ? `
-                <div class="flex justify-between w-full font-bold text-lg">
-                    <span>شما</span>
-                    <span>${gameData.game.playerCorrect} درست</span>
-                </div>
-                <div class="flex justify-between w-full font-bold text-lg">
-                    <span>${gameData.bot.name}</span>
-                    <span>${gameData.game.botCorrect} درست</span>
-                </div>` : `
-                <div class="flex justify-between w-full font-bold text-lg">
-                    <span>تعداد پاسخ‌های درست:</span>
-                    <span>${gameData.game.playerCorrect}</span>
-                </div>
-                `}
-                <div class="flex flex-col space-y-4 mt-6">
-                    <button id="return-to-menu-btn" class="button w-full bg-[#2e2e2e] text-golden">
-                        بازگشت به منو
-                    </button>
-                    <button id="review-questions-btn" class="button w-full bg-[#2e2e2e] text-golden">
-                        مرور سوال‌ها
-                    </button>
-                    <button id="share-btn" class="button w-full golden-gradient text-gray-900">
-                        اشتراک‌گذاری
-                    </button>
-                </div>
-            </div>
-        `;
-
-        document.getElementById('return-to-menu-btn').addEventListener('click', () => {
-            gameData.game.screen = 'mainMenu';
-            renderScreen();
-        });
-        document.getElementById('review-questions-btn').addEventListener('click', () => {
-            renderModal('این قابلیت هنوز پیاده‌سازی نشده است.');
-        });
-        document.getElementById('share-btn').addEventListener('click', () => {
-            renderModal('این قابلیت هنوز پیاده‌سازی نشده است.');
-        });
-    }
-
-    // Settings screen
-    function renderSettings() {
-        const app = document.getElementById('app');
-        app.innerHTML = `
-            <div class="w-full h-screen flex flex-col items-center justify-between">
-                <div class="w-full text-center mt-12">
-                    <h2 class="text-3xl font-bold text-golden">تنظیمات</h2>
-                </div>
-                
-                <div class="flex-grow flex flex-col items-center justify-center w-full space-y-4 px-4">
-                    <p class="text-gray-400">این صفحه هنوز پیاده‌سازی نشده است.</p>
-                </div>
-
-                <button id="back-to-menu-btn" class="button w-full max-w-xs golden-gradient text-gray-900 mb-4">
-                    بازگشت به منو
-                </button>
-            </div>
-        `;
-        document.getElementById('back-to-menu-btn').addEventListener('click', () => {
-            gameData.game.screen = 'mainMenu';
-            renderScreen();
-        });
-    }
-
-    // Placeholder screen for other nav items
-    function renderPlaceholder() {
-        const app = document.getElementById('app');
-        app.innerHTML = `<div class="w-full h-screen flex items-center justify-center"><p class="text-lg text-gray-400">این بخش در حال توسعه است.</p></div>`;
-    }
-
-    // Ban panel
-    function renderBanPanel() {
-        const app = document.getElementById('app');
-        const remainingTime = getRemainingBanTime();
-        const minutes = Math.floor(remainingTime / 60000);
-        const seconds = Math.floor((remainingTime % 60000) / 1000);
-        
-        app.innerHTML = `
-            <div class="card w-full p-6 space-y-6 text-center golden-glow bg-[#1a1a1a] rounded-xl">
-                <h2 class="text-2xl font-bold text-red-500">شما بن شده‌اید!</h2>
-                <p class="text-gray-400">به دلیل خروج مکرر از بازی، دسترسی شما به بازی آنلاین به طور موقت مسدود شده است.</p>
-                <div class="text-white text-3xl font-bold countdown-text">
-                    ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}
-                </div>
-                <button id="back-to-menu-btn" class="button w-full bg-[#2e2e2e] text-golden">
-                    بازگشت به منو
-                </button>
-            </div>
-        `;
-
-        const banTimer = setInterval(() => {
-            const newRemainingTime = getRemainingBanTime();
-            if (newRemainingTime <= 0) {
-                clearInterval(banTimer);
-                gameData.game.screen = 'mainMenu';
-                renderScreen();
-            } else {
-                const newMinutes = Math.floor(newRemainingTime / 60000);
-                const newSeconds = Math.floor((newRemainingTime % 60000) / 1000);
-                document.querySelector('.countdown-text').textContent = `${newMinutes.toString().padStart(2, '0')}:${newSeconds.toString().padStart(2, '0')}`;
-            }
-        }, 1000);
-
-        document.getElementById('back-to-menu-btn').addEventListener('click', () => {
-            clearInterval(banTimer);
-            gameData.game.screen = 'mainMenu';
-            renderScreen();
-        });
-    }
-    
-    function resetGame() {
-        gameData.game.currentRound = 0;
-        gameData.game.playerCorrect = 0;
-        gameData.game.botCorrect = 0;
-        gameData.game.totalQuestions = 3 * 4; // 3 rounds, 4 questions each
-        gameData.game.currentQuestionIndex = 0;
-        gameData.game.currentTopic = '';
-        gameData.game.currentQuestion = null;
-        gameData.game.playerAnswered = false;
-
-        clearInterval(gameData.game.roundTimer);
-        clearInterval(gameData.game.intervalTimer);
-    }
-    
-    function startRoundInterval() {
-        const introPanel = document.getElementById('round-intro');
-        if (!introPanel) return;
-
-        let countdown = 3;
-        const countdownEl = document.getElementById('interval-countdown');
-        
-        gameData.game.intervalTimer = setInterval(() => {
-            countdown--;
-            if (countdown > 0) {
-                countdownEl.textContent = countdown;
-            } else {
-                clearInterval(gameData.game.intervalTimer);
-                introPanel.style.opacity = '0';
-                setTimeout(() => {
-                    introPanel.style.display = 'none';
-                    document.getElementById('question-card').style.display = 'flex';
-                    startNewQuestion();
-                }, 500);
-            }
-        }, 1000);
-    }
-
-    function startNewQuestion() {
-        if (gameData.game.currentQuestionIndex >= gameData.game.totalQuestions) {
-            endGame();
-            return;
-        }
-
-        const roundQuestions = gameData.questions[gameData.topics[gameData.game.currentRound]];
-        const questionInRoundIndex = gameData.game.currentQuestionIndex % 4;
-        gameData.game.currentQuestion = roundQuestions[questionInRoundIndex];
-        gameData.game.currentTopic = gameData.topics[gameData.game.currentRound];
-        gameData.game.playerAnswered = false;
-
-        // Shuffle options to make it more random
-        gameData.game.currentQuestion.options.sort(() => Math.random() - 0.5);
-
-        renderGameContent();
-        startRoundTimer();
-    }
-    
-    function renderGameContent() {
-        const question = gameData.game.currentQuestion;
-        if (!question) return;
-
-        document.getElementById('question-text').textContent = question.q;
-        const optionsContainer = document.querySelector('#question-card .grid');
-        optionsContainer.innerHTML = question.options.map(opt => `
-            <button class="option-btn button bg-[#2e2e2e] text-white" data-answer="${opt}">
-                ${opt}
-            </button>
-        `).join('');
-
-        document.querySelectorAll('.option-btn').forEach(button => {
-            button.addEventListener('click', handleAnswer);
-        });
-    }
-
-    function startRoundTimer() {
-        let timeLeft = 40;
-        const timerEl = document.getElementById('round-timer');
-        timerEl.textContent = timeLeft;
-
-        gameData.game.roundTimer = setInterval(() => {
-            timeLeft--;
-            timerEl.textContent = timeLeft;
-            if (timeLeft <= 10) {
-                timerEl.classList.add('text-red-500');
-            } else {
-                timerEl.classList.remove('text-red-500');
-            }
-
-            if (timeLeft <= 0) {
-                clearInterval(gameData.game.roundTimer);
-                handleAnswer(null, 'timeout');
-            }
-        }, 1000);
-    }
-
-    function handleAnswer(event, type = 'click') {
-        if (gameData.game.playerAnswered) return;
-        gameData.game.playerAnswered = true;
-        clearInterval(gameData.game.roundTimer);
-        
-        let isCorrect = false;
-        if (type === 'click') {
-            const selectedAnswer = event.target.dataset.answer;
-            if (selectedAnswer === gameData.game.currentQuestion.a) {
-                gameData.game.playerCorrect++;
-                isCorrect = true;
-                event.target.classList.add('bg-green-600', 'border-green-400');
-            } else {
-                gameData.game.playerCorrect = Math.max(0, gameData.game.playerCorrect - 1);
-                event.target.classList.add('bg-red-600', 'border-red-400');
-            }
-        } else if (type === 'timeout') {
-            gameData.game.playerCorrect = Math.max(0, gameData.game.playerCorrect - 1);
-        }
-
-        // Simulating bot's turn
-        const botAnswersCorrectly = Math.random() < 0.7; // 70% chance to be correct
-        if (botAnswersCorrectly) {
-            gameData.game.botCorrect++;
-        }
-
-        setTimeout(() => {
-            gameData.game.currentQuestionIndex++;
-            if (gameData.game.currentQuestionIndex % 4 === 0) {
-                gameData.game.currentRound++;
-            }
-            if (gameData.game.currentRound >= 3) {
-                endGame();
-            } else {
-                renderScreen();
-            }
-        }, 1500);
-    }
-    
-    function endGame() {
-        const cupChange = gameData.game.playerCorrect - gameData.game.botCorrect;
-        gameData.user.cups += cupChange;
-
-        if (gameData.game.isOnlineMode) {
-            if (gameData.game.playerCorrect > gameData.game.botCorrect) {
-                gameData.user.onlineWins++;
-            } else if (gameData.game.playerCorrect < gameData.game.botCorrect) {
-                gameData.user.onlineLosses++;
-            }
-        }
-        
-        gameData.game.screen = 'endGame';
-        renderScreen();
-    }
-
-    function handleGameExit() {
-        if (gameData.game.isOnlineMode) {
-            gameData.user.totalBans++;
-            localStorage.setItem(BAN_KEY, Date.now().toString());
-            renderModal('به دلیل خروج از بازی آنلاین، به مدت ۱ دقیقه بن شدید.', true, () => {
-                gameData.game.screen = 'mainMenu';
-                renderScreen();
+        // --- Main Menu Logic ---
+        function initMainMenu() {
+            document.getElementById('start-game-btn').addEventListener('click', () => {
+                showScreen('levelSelection');
+                renderLevelGrid();
             });
-        } else {
-            gameData.game.screen = 'mainMenu';
-            renderScreen();
+            document.getElementById('settings-btn').addEventListener('click', () => settingsModal.style.display = 'flex');
+            document.getElementById('close-settings-btn').addEventListener('click', () => settingsModal.style.display = 'none');
         }
-    }
 
-    // Initial render
-    window.onload = function () {
-        renderScreen();
-    };
-</script>
+        // --- Falling Letters Animation ---
+        function startFallingLetters() {
+            const canvas = document.getElementById('falling-letters-canvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const letters = 'ابپتثجچحخدذرزژسشصضطظعغفقکگلمنوهی';
+            const fontSize = 18;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+
+            for (let x = 0; x < columns; x++) {
+                drops[x] = 1;
+            }
+
+            function draw() {
+                ctx.fillStyle = 'rgba(18, 18, 18, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#FFD700'; // Gold color
+                ctx.font = fontSize + 'px Vazirmatn';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = letters[Math.floor(Math.random() * letters.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            setInterval(draw, 40);
+        }
+
+        // --- Level Selection Logic ---
+        function initLevelSelection() {
+            document.getElementById('back-to-menu-btn').addEventListener('click', () => showScreen('mainMenu'));
+        }
+
+        function renderLevelGrid() {
+            const grid = document.getElementById('level-grid');
+            grid.innerHTML = '';
+            for (let i = 1; i <= TOTAL_LEVELS; i++) {
+                const levelIcon = document.createElement('button');
+                levelIcon.textContent = i;
+                levelIcon.className = 'level-icon w-16 h-16 rounded-full flex items-center justify-center font-bold text-2xl';
+
+                if (i <= gameState.unlockedLevel) {
+                    if (gameState.completedLevels.includes(i)) {
+                        levelIcon.classList.add('completed');
+                    } else {
+                        levelIcon.classList.add('unlocked');
+                    }
+                    levelIcon.onclick = () => startGame(i);
+                } else {
+                    levelIcon.classList.add('locked');
+                    levelIcon.innerHTML = '&#128274;'; // Lock emoji
+                }
+                grid.appendChild(levelIcon);
+            }
+        }
+        
+        // --- Gameplay Logic ---
+        function initGameplay() {
+            document.getElementById('back-to-levels-btn').addEventListener('click', () => {
+                clearInterval(gameState.timerInterval);
+                showScreen('levelSelection');
+            });
+            document.getElementById('submit-answer-btn').addEventListener('click', submitAnswer);
+            document.getElementById('riddle-answer-input').addEventListener('keypress', (e) => {
+                if(e.key === 'Enter') submitAnswer();
+            });
+        }
+        
+        function startGame(levelNumber) {
+            gameState.currentLevel = levelNumber;
+            gameState.currentRiddleIndex = 0;
+            gameState.score = 0;
+            gameState.currentRiddles = generateRiddlesForLevel();
+            
+            document.getElementById('game-level-number').textContent = levelNumber;
+            document.getElementById('game-score').textContent = '0';
+            
+            showScreen('gameplay');
+            loadNextRiddle();
+        }
+
+        function generateRiddlesForLevel() {
+            const shuffled = [...allRiddles].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, RIDDLES_PER_LEVEL);
+        }
+
+        function loadNextRiddle() {
+            if (gameState.currentRiddleIndex >= gameState.currentRiddles.length) {
+                endLevel();
+                return;
+            }
+
+            const riddle = gameState.currentRiddles[gameState.currentRiddleIndex];
+            document.getElementById('riddle-question').textContent = riddle.q;
+            document.getElementById('riddle-answer-input').value = '';
+            document.getElementById('riddle-answer-input').focus();
+            
+            startTimer();
+        }
+        
+        function startTimer() {
+            clearInterval(gameState.timerInterval);
+            gameState.timeLeft = TIME_PER_RIDDLE;
+            const timerEl = document.getElementById('game-timer');
+            timerEl.textContent = gameState.timeLeft;
+            timerEl.parentElement.style.borderColor = '#FFD700';
+
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeLeft--;
+                timerEl.textContent = gameState.timeLeft;
+                if (gameState.timeLeft <= 3) {
+                     timerEl.parentElement.style.borderColor = '#ef4444'; // Red
+                }
+                if (gameState.timeLeft <= 0) {
+                    skipQuestion();
+                }
+            }, 1000);
+        }
+
+        function submitAnswer() {
+            clearInterval(gameState.timerInterval);
+            const userAnswer = document.getElementById('riddle-answer-input').value.trim();
+            const correctAnswer = gameState.currentRiddles[gameState.currentRiddleIndex].a;
+
+            if (userAnswer === correctAnswer) {
+                gameState.score++;
+                document.getElementById('game-score').textContent = gameState.score;
+            }
+            
+            gameState.currentRiddleIndex++;
+            loadNextRiddle();
+        }
+        
+        function skipQuestion() {
+            clearInterval(gameState.timerInterval);
+            // No points awarded
+            gameState.currentRiddleIndex++;
+            loadNextRiddle();
+        }
+
+        // --- Level End Logic ---
+        function initLevelEnd() {
+            document.getElementById('retry-level-btn').addEventListener('click', () => startGame(gameState.currentLevel));
+            document.getElementById('next-level-btn').addEventListener('click', () => {
+                if (gameState.currentLevel < TOTAL_LEVELS) {
+                    startGame(gameState.currentLevel + 1);
+                } else {
+                    alert('شما تمام مراحل را به پایان رسانده‌اید!');
+                    showScreen('levelSelection');
+                }
+            });
+            document.getElementById('end-back-to-levels-btn').addEventListener('click', () => {
+                showScreen('levelSelection');
+                renderLevelGrid();
+            });
+        }
+        
+        function endLevel() {
+            clearInterval(gameState.timerInterval);
+            const correct = gameState.score;
+            const wrong = gameState.currentRiddles.length - correct;
+            
+            document.getElementById('correct-answers').textContent = correct;
+            document.getElementById('wrong-answers').textContent = wrong;
+
+            const successThreshold = Math.ceil(RIDDLES_PER_LEVEL * 0.6); // Must get 60% correct
+            
+            if (correct >= successThreshold) {
+                document.getElementById('level-end-title').textContent = 'موفقیت!';
+                document.getElementById('level-end-title').className = 'text-4xl font-black text-green-400';
+                document.getElementById('next-level-btn').style.display = 'block';
+                
+                if (!gameState.completedLevels.includes(gameState.currentLevel)) {
+                    gameState.completedLevels.push(gameState.currentLevel);
+                }
+                
+                if (gameState.currentLevel === gameState.unlockedLevel && gameState.unlockedLevel < TOTAL_LEVELS) {
+                    gameState.unlockedLevel++;
+                }
+            } else {
+                document.getElementById('level-end-title').textContent = 'شکست!';
+                document.getElementById('level-end-title').className = 'text-4xl font-black text-red-400';
+                document.getElementById('next-level-btn').style.display = 'none';
+            }
+            
+            showScreen('levelEnd');
+        }
+
+        // --- App Initialization ---
+        function init() {
+            initOnboarding();
+            initMainMenu();
+            initLevelSelection();
+            initGameplay();
+            initLevelEnd();
+            showScreen('onboarding');
+        }
+
+        window.onload = init;
+        window.onresize = () => {
+            const canvas = document.getElementById('falling-letters-canvas');
+            if(canvas) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        };
+
+    </script>
+
 </body>
 </html>
