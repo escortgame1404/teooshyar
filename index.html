@@ -137,11 +137,11 @@
 </head>
 <body class="overflow-hidden">
     
-    <!-- Loading Screen -->
-    <div id="loading-screen" class="screen p-8 flex flex-col justify-center items-center h-screen">
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="screen p-8 flex flex-col justify-center items-center h-screen">
         <div class="w-full max-w-xs text-center">
-            <img src="https://s6.uupload.ir/files/inshot_۲۰۲۵۰۹۲۴_۲۰۱۱۲۴۲۰۰_era.jpg" alt="[تصویر لوگوی بازی چیستان]" class="w-48 h-48 mx-auto rounded-full shadow-lg shadow-yellow-400/20 animate-pulse">
-            <p class="text-gray-300 text-lg mt-8 gold-gradient-text font-bold">...در حال بارگذاری</p>
+            <img src="https://s6.uupload.ir/files/inshot_۲۰۲۵۰۹۲۴_۲۰۱۱۲۴۲۰۰_era.jpg" alt="[تصویر لوگوی بازی چیستان]" class="w-48 h-48 mx-auto rounded-full shadow-lg shadow-yellow-400/20">
+            <p class="text-gray-300 text-xl mt-8 font-bold">اسکورت گیم تقدیم میکند</p>
         </div>
     </div>
 
@@ -268,7 +268,7 @@
     <script>
         // --- DOM Elements ---
         const screens = {
-            loading: document.getElementById('loading-screen'),
+            splash: document.getElementById('splash-screen'),
             onboarding: document.getElementById('onboarding-screen'),
             mainMenu: document.getElementById('main-menu-screen'),
             levelSelection: document.getElementById('level-selection-screen'),
@@ -280,7 +280,6 @@
         // --- Game State & Data ---
         const TOTAL_LEVELS = 70;
         const RIDDLES_PER_LEVEL = 5;
-        const STORAGE_KEY = 'chistanGameState';
         
         let gameState = {
             username: '',
@@ -317,38 +316,10 @@
             { q: 'آن چیست که در قرن یک بار، در دقیقه دو بار و در ساعت هیچ بار نمی‌آید؟', a: 'ق', options: ['نقطه', 'حرف', 'ق', 'عدد'] },
         ];
         
-        // --- Persistence ---
-        function saveGameState() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
-        }
-
-        function loadGameState() {
-            const savedState = localStorage.getItem(STORAGE_KEY);
-            if (savedState) {
-                // Merge saved state with default state to avoid issues if new properties are added later
-                const loadedState = JSON.parse(savedState);
-                gameState = { ...gameState, ...loadedState };
-                return true;
-            }
-            return false;
-        }
-
         // --- Navigation ---
         function showScreen(screenName) {
             Object.values(screens).forEach(screen => screen.style.display = 'none');
             screens[screenName].style.display = 'flex';
-        }
-        
-        function finishLoading() {
-            if (loadGameState()) {
-                // If data exists, go to main menu
-                updateUI();
-                showScreen('mainMenu');
-                startFallingLetters();
-            } else {
-                // If no data, go to onboarding
-                showScreen('onboarding');
-            }
         }
 
         // --- UI Update ---
@@ -370,7 +341,6 @@
                 if (username && age && termsCheckbox.checked) {
                     gameState.username = username;
                     gameState.age = age;
-                    saveGameState();
                     updateUI();
                     showScreen('mainMenu');
                     startFallingLetters();
@@ -575,7 +545,6 @@
                 if (gameState.currentLevel === gameState.unlockedLevel && gameState.unlockedLevel < TOTAL_LEVELS) {
                     gameState.unlockedLevel++;
                 }
-                saveGameState(); // Save progress after a successful level
             } else {
                 document.getElementById('level-end-title').textContent = 'شکست!';
                 document.getElementById('level-end-title').className = 'text-4xl font-black text-red-400';
@@ -593,11 +562,11 @@
             initGameplay();
             initLevelEnd();
             
-            showScreen('loading');
+            showScreen('splash');
             
             // Simple splash screen delay
             setTimeout(() => {
-                finishLoading();
+                showScreen('onboarding');
             }, 3000); // 3 second delay
         }
 
