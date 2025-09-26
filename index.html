@@ -140,11 +140,8 @@
     <!-- Loading Screen -->
     <div id="loading-screen" class="screen p-8 flex flex-col justify-center items-center h-screen">
         <div class="w-full max-w-xs text-center">
-            <img src="https://s6.uupload.ir/files/inshot_۲۰۲۵۰۹۲۴_۲۰۱۱۲۴۲۰۰_era.jpg" alt="[تصویر لوگوی بازی چیستان]" class="w-48 h-48 mx-auto mb-8 rounded-full shadow-lg shadow-yellow-400/20">
-            <div class="w-full bg-gray-700 rounded-full h-2.5 mb-4">
-                <div id="loading-progress-bar" class="bg-yellow-400 h-2.5 rounded-full transition-all duration-300 ease-linear" style="width: 0%"></div>
-            </div>
-            <p id="loading-status-text" class="text-gray-300 text-sm">درحال آماده سازی...</p>
+            <img src="https://s6.uupload.ir/files/inshot_۲۰۲۵۰۹۲۴_۲۰۱۱۲۴۲۰۰_era.jpg" alt="[تصویر لوگوی بازی چیستان]" class="w-48 h-48 mx-auto rounded-full shadow-lg shadow-yellow-400/20 animate-pulse">
+            <p class="text-gray-300 text-lg mt-8 gold-gradient-text font-bold">...در حال بارگذاری</p>
         </div>
     </div>
 
@@ -340,34 +337,6 @@
         function showScreen(screenName) {
             Object.values(screens).forEach(screen => screen.style.display = 'none');
             screens[screenName].style.display = 'flex';
-        }
-
-        // --- Loading Screen Logic ---
-        function startLoading() {
-            const progressBar = document.getElementById('loading-progress-bar');
-            const statusText = document.getElementById('loading-status-text');
-            let progress = 0;
-            const duration = 3500; // 3.5 seconds
-            
-            const texts = ["درحال اتصال به سرور...", "دریافت اطلاعات کاربر...", "ورود به بازی..."];
-            let textIndex = 0;
-            
-            const textInterval = setInterval(() => {
-                if (textIndex < texts.length) {
-                    statusText.textContent = texts[textIndex];
-                    textIndex++;
-                }
-            }, duration / (texts.length + 1));
-
-            const progressInterval = setInterval(() => {
-                progress += 1;
-                progressBar.style.width = `${progress}%`;
-                if(progress >= 100) {
-                    clearInterval(progressInterval);
-                    clearInterval(textInterval);
-                    setTimeout(finishLoading, 300);
-                }
-            }, (duration / 100));
         }
         
         function finishLoading() {
@@ -625,7 +594,11 @@
             initLevelEnd();
             
             showScreen('loading');
-            startLoading();
+            
+            // Simple splash screen delay
+            setTimeout(() => {
+                finishLoading();
+            }, 3000); // 3 second delay
         }
 
         window.onload = init;
