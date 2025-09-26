@@ -11,6 +11,7 @@
             font-family: 'Vazirmatn', sans-serif;
             background-color: #0A0A0A; /* مشکی تیره‌تر */
             color: #E0E0E0;
+            overflow: hidden; /* جلوگیری از اسکرول */
         }
         .golden-gradient {
             background: linear-gradient(90deg, #FAD961, #F79521);
@@ -80,10 +81,6 @@
             animation: fadeInScale 0.3s ease-out;
             box-shadow: 0 0 30px rgba(250, 217, 97, 0.4);
         }
-        .main-menu-bg {
-            background: radial-gradient(circle at top, rgba(255, 215, 0, 0.08) 0%, rgba(18, 18, 18, 0) 60%),
-                        repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 5px);
-        }
 
         /* انیمیشن برای ذره‌بین در صفحه جستجو */
         @keyframes pulse-rotate {
@@ -123,11 +120,39 @@
         .stat-item:nth-child(3) { animation-delay: 0.3s; }
         .stat-item:nth-child(4) { animation-delay: 0.4s; }
         .stat-item:nth-child(5) { animation-delay: 0.5s; }
+
+        /* --- افکت جدید ریزش حروف --- */
+        .falling-letters-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1; /* قرار گرفتن در پشت محتوا */
+        }
+        .falling-letter {
+            position: absolute;
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.1);
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            from { transform: translateY(-100vh) rotate(0deg); opacity: 0; }
+            50% { opacity: 1; }
+            to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* حذف افکت طلایی قدیمی */
+        .main-menu-bg {
+          /* این کلاس اکنون فقط برای استایل دهی به flexbox استفاده می‌شود */
+        }
     </style>
 </head>
 <body class="bg-[#0A0A0A] flex items-center justify-center min-h-screen p-4">
 
-<div id="app" class="w-full max-w-sm mx-auto flex flex-col items-center main-menu-bg"></div>
+<div id="app" class="w-full max-w-sm mx-auto flex flex-col items-center"></div>
 
 <script>
     // Game data and state management
@@ -275,6 +300,9 @@
         app.classList.remove('panel-enter');
         void app.offsetWidth; // Force reflow to restart animation
         app.innerHTML = '';
+        // حذف افکت پس‌زمینه قدیمی
+        app.classList.remove('main-menu-bg');
+
         switch (gameData.game.screen) {
             case 'onboarding':
                 renderOnboarding();
@@ -339,11 +367,32 @@
         });
     }
 
+    // تابع جدید برای ایجاد افکت ریزش حروف
+    function startFallingLetters(containerId) {
+        const container = document.getElementById(containerId);
+        const chars = 'ابپتثجچحخدذرزژسشصضطظعغفقکگلمنوهی';
+        const numLetters = 50;
+
+        for (let i = 0; i < numLetters; i++) {
+            const letter = document.createElement('div');
+            letter.className = 'falling-letter';
+            letter.textContent = chars[Math.floor(Math.random() * chars.length)];
+            
+            letter.style.left = `${Math.random() * 100}vw`;
+            letter.style.animationDuration = `${Math.random() * 5 + 5}s`;
+            letter.style.animationDelay = `-${Math.random() * 5}s`;
+            
+            container.appendChild(letter);
+        }
+    }
+
     // Main menu screen
     function renderMainMenu() {
         const app = document.getElementById('app');
+        // اضافه کردن کانتینر برای حروف
         app.innerHTML = `
-            <div class="w-full h-screen flex flex-col items-center justify-between main-menu-bg">
+            <div id="falling-letters-container" class="falling-letters-bg"></div>
+            <div class="w-full h-screen flex flex-col items-center justify-between">
                 <!-- Top Bar -->
                 <div class="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-4 py-4">
                     <div id="settings-btn" class="p-2 cursor-pointer transition-transform duration-200 hover:rotate-45">
@@ -399,6 +448,8 @@
                 </div>
             </div>
         `;
+        // فراخوانی تابع برای شروع ریزش حروف
+        startFallingLetters('falling-letters-container');
 
         document.getElementById('user-profile-btn').addEventListener('click', renderProfileModal);
         document.getElementById('settings-btn').addEventListener('click', () => {
@@ -626,224 +677,206 @@
             renderScreen();
         });
     }
-    
-    let banCountdownInterval;
 
+    // Ban screen
     function renderBanPanel() {
         const app = document.getElementById('app');
+        const remainingTime = Math.ceil(getRemainingBanTime() / 1000);
+        
+        let timerDisplay = `مدت باقی مانده: <span id="ban-timer" class="countdown-text">${remainingTime}</span> ثانیه`;
+        if (remainingTime <= 0) {
+            timerDisplay = 'محدودیت شما به پایان رسیده است.';
+        }
+
         app.innerHTML = `
-            <div class="card w-full p-6 space-y-4 text-center golden-glow panel-enter bg-[#1a1a1a] rounded-xl">
-                <h2 class="text-2xl font-bold text-golden">اکانت شما مسدود است</h2>
-                <p class="text-gray-400">
-                    به علت ترک بازی آنلاین، اکانت شما به مدت یک دقیقه مسدود شده است.
-                </p>
-                <div class="flex flex-col items-center">
-                    <span class="text-sm text-gray-500">زمان باقی‌مانده:</span>
-                    <span id="ban-countdown" class="text-4xl font-bold text-red-500 countdown-text mt-2">--:--</span>
-                </div>
-                <p class="text-gray-400">تا زمان رفع مسدودی می‌توانید بازی تک نفره انجام دهید.</p>
-                <button id="back-to-menu-btn" class="button w-full golden-gradient text-gray-900 mt-6">
+            <div class="card w-full p-6 space-y-4 text-center bg-[#1a1a1a] rounded-xl golden-glow">
+                <h2 class="text-2xl font-bold text-red-500">حساب شما موقتاً مسدود است</h2>
+                <p class="text-gray-400">شما به دلیل ترک مکرر بازی به مدت ۱ دقیقه از بازی آنلاین منع شده‌اید.</p>
+                <p class="text-lg text-white font-bold">${timerDisplay}</p>
+                <button id="return-from-ban" class="button w-full golden-gradient text-gray-900 mt-6">
                     بازگشت به منو
                 </button>
             </div>
         `;
-        
-        document.getElementById('back-to-menu-btn').addEventListener('click', () => {
-            clearInterval(banCountdownInterval);
+
+        if (remainingTime > 0) {
+            const banTimerInterval = setInterval(() => {
+                const newRemainingTime = Math.ceil(getRemainingBanTime() / 1000);
+                const timerElement = document.getElementById('ban-timer');
+                if (timerElement) {
+                    timerElement.textContent = newRemainingTime;
+                }
+                if (newRemainingTime <= 0) {
+                    clearInterval(banTimerInterval);
+                    renderModal('محدودیت شما به پایان رسید. اکنون می‌توانید دوباره بازی آنلاین انجام دهید.', true, () => {
+                        gameData.game.screen = 'mainMenu';
+                        renderScreen();
+                    });
+                }
+            }, 1000);
+        }
+
+        document.getElementById('return-from-ban').addEventListener('click', () => {
             gameData.game.screen = 'mainMenu';
             renderScreen();
         });
-
-        const countdownElement = document.getElementById('ban-countdown');
-        if (!countdownElement) return;
-
-        clearInterval(banCountdownInterval);
-        
-        function updateCountdown() {
-            const remainingTime = getRemainingBanTime();
-            if (remainingTime <= 0) {
-                clearInterval(banCountdownInterval);
-                renderModal('مسدودیت اکانت شما برطرف شد!', true, () => {
-                    gameData.game.screen = 'mainMenu';
-                    renderScreen();
-                });
-                return;
-            }
-            
-            const minutes = Math.floor(remainingTime / 60000);
-            const seconds = Math.floor((remainingTime % 60000) / 1000);
-            countdownElement.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        }
-        
-        updateCountdown();
-        banCountdownInterval = setInterval(updateCountdown, 1000);
     }
-
+    
     // Game logic functions
     function resetGame() {
+        gameData.game.currentRound = 0;
         gameData.game.playerScore = 0;
         gameData.game.botScore = 0;
-        gameData.game.currentRound = 0;
         gameData.game.playerCorrect = 0;
         gameData.game.botCorrect = 0;
         gameData.game.currentQuestionIndex = 0;
-        if (gameData.game.roundTimer) clearInterval(gameData.game.roundTimer);
-        if (gameData.game.intervalTimer) clearInterval(gameData.game.intervalTimer);
+        gameData.game.totalQuestions = 0;
+        if (gameData.game.questionInterval) clearInterval(gameData.game.questionInterval);
+        if (gameData.game.roundTimer) clearTimeout(gameData.game.roundTimer);
+        if (gameData.game.intervalTimer) clearTimeout(gameData.game.intervalTimer);
     }
-
+    
     function startRoundInterval() {
-        const introScreen = document.getElementById('round-intro');
         const countdownElement = document.getElementById('interval-countdown');
         let count = 3;
-        introScreen.style.display = 'flex';
-        countdownElement.innerText = count;
-
-        gameData.game.intervalTimer = setInterval(() => {
+        const interval = setInterval(() => {
             count--;
-            countdownElement.innerText = count;
-            if (count <= 0) {
-                clearInterval(gameData.game.intervalTimer);
-                introScreen.style.display = 'none';
-                startGameRound();
+            countdownElement.textContent = count;
+            if (count === 0) {
+                clearInterval(interval);
+                document.getElementById('round-intro').style.display = 'none';
+                document.getElementById('question-card').style.display = 'flex';
+                startRound();
             }
         }, 1000);
+        gameData.game.intervalTimer = interval;
     }
-
-    function startGameRound() {
-        gameData.game.currentQuestionIndex = 0;
-        let timeRemaining = 40;
-        const timerElement = document.getElementById('round-timer');
-        const questionCard = document.getElementById('question-card');
-        questionCard.style.display = 'flex';
-
-        timerElement.innerText = timeRemaining;
-        gameData.game.roundTimer = setInterval(() => {
-            timeRemaining--;
-            timerElement.innerText = timeRemaining;
-            if (timeRemaining <= 0) {
-                clearInterval(gameData.game.roundTimer);
-                endGameRound();
-            }
-        }, 1000);
-
-        displayNextQuestion();
-    }
-
-    function displayNextQuestion() {
+    
+    function startRound() {
         const topic = gameData.topics[gameData.game.currentRound];
-        const questionsForTopic = gameData.questions[topic];
-
-        if (gameData.game.currentQuestionIndex >= questionsForTopic.length) {
-            endGameRound();
+        gameData.game.currentTopic = topic;
+        const questions = gameData.questions[topic].sort(() => 0.5 - Math.random());
+        gameData.game.totalQuestions = questions.length;
+        gameData.game.currentQuestionIndex = 0;
+        
+        let timeLeft = 40;
+        const timerElement = document.getElementById('round-timer');
+        timerElement.textContent = timeLeft;
+        gameData.game.roundTimer = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(gameData.game.roundTimer);
+                gameData.game.playerCorrect = 0; // بازیکن به دلیل اتمام زمان، هیچ امتیازی نمی‌گیرد
+                endRound();
+            }
+        }, 1000);
+        
+        displayQuestion(questions[gameData.game.currentQuestionIndex]);
+    }
+    
+    function displayQuestion(question) {
+        if (!question) {
+            endRound();
             return;
         }
-
-        const question = questionsForTopic[gameData.game.currentQuestionIndex];
-        gameData.game.currentTopic = topic;
         gameData.game.currentQuestion = question;
-        gameData.game.currentQuestionIndex++;
-
-        // Update UI with new question
-        const questionTextElement = document.getElementById('question-text');
+        document.getElementById('question-text').textContent = question.q;
         const optionsContainer = document.querySelector('#question-card .grid');
-
-        if (questionTextElement && optionsContainer) {
-            questionTextElement.innerText = question.q;
-            optionsContainer.innerHTML = question.options.map((opt, i) => `
-                <button class="option-btn button bg-[#2e2e2e] text-white" data-answer="${opt}">
-                    ${opt}
-                </button>
-            `).join('');
-            document.querySelectorAll('.option-btn').forEach(button => {
-                button.addEventListener('click', handleAnswer);
-            });
-        }
-
+        optionsContainer.innerHTML = question.options.map(opt => `
+            <button class="option-btn button bg-[#2e2e2e] text-white" data-answer="${opt}">
+                ${opt}
+            </button>
+        `).join('');
+        document.querySelectorAll('.option-btn').forEach(button => {
+            button.addEventListener('click', handleAnswer);
+        });
+        
+        // پاسخ تصادفی ربات
         if (gameData.game.isOnlineMode) {
-            botAnswer();
+            botAnswerLogic(question);
         }
     }
-
+    
     function handleAnswer(event) {
-        // Disable all buttons to prevent multiple clicks
-        document.querySelectorAll('.option-btn').forEach(button => button.disabled = true);
-
-        const selectedAnswer = event.target.dataset.answer;
-        const isCorrect = selectedAnswer === gameData.game.currentQuestion.a;
-
-        if (isCorrect) {
+        if (gameData.game.questionInterval) clearInterval(gameData.game.questionInterval);
+        const selectedAnswer = event.target.getAttribute('data-answer');
+        const correctAnswer = gameData.game.currentQuestion.a;
+        
+        if (selectedAnswer === correctAnswer) {
             gameData.game.playerCorrect++;
-            event.target.classList.add('bg-green-600', 'golden-glow');
+            event.target.classList.add('bg-green-600', 'text-white');
         } else {
-            event.target.classList.add('bg-red-600');
-            // Highlight the correct answer
-            const correctBtn = document.querySelector(`.option-btn[data-answer="${gameData.game.currentQuestion.a}"]`);
-            if (correctBtn) {
-                correctBtn.classList.add('bg-green-600', 'golden-glow');
-            }
+            event.target.classList.add('bg-red-600', 'text-white');
         }
         
-        document.querySelector('#round-timer').classList.remove('text-white');
-        document.querySelector('#round-timer').classList.add(isCorrect ? 'text-green-500' : 'text-red-500');
-
+        // نمایش پاسخ درست
+        document.querySelectorAll('.option-btn').forEach(button => {
+            button.disabled = true;
+            if (button.getAttribute('data-answer') === correctAnswer) {
+                button.classList.add('bg-green-600', 'text-white');
+            }
+        });
+        
         setTimeout(() => {
-            document.querySelector('#round-timer').classList.remove('text-green-500', 'text-red-500');
-            document.querySelector('#round-timer').classList.add('text-white');
-            displayNextQuestion();
+            gameData.game.currentQuestionIndex++;
+            if (gameData.game.currentQuestionIndex < gameData.game.totalQuestions) {
+                displayQuestion(gameData.questions[gameData.game.currentTopic][gameData.game.currentQuestionIndex]);
+            } else {
+                endRound();
+            }
         }, 1500);
     }
     
-    function botAnswer() {
-        const isBotCorrect = Math.random() < 0.7; // 70% chance of bot being correct
+    function botAnswerLogic(question) {
+        const isBotCorrect = Math.random() < 0.7; // 70% شانس برای پاسخ صحیح ربات
         if (isBotCorrect) {
             gameData.game.botCorrect++;
         }
-        const botScoreDisplay = document.getElementById('bot-score-display');
-        if (botScoreDisplay) {
-            botScoreDisplay.innerText = gameData.game.botCorrect;
-        }
     }
-
-    function endGameRound() {
-        clearInterval(gameData.game.roundTimer);
+    
+    function endRound() {
+        if (gameData.game.roundTimer) clearInterval(gameData.game.roundTimer);
         gameData.game.currentRound++;
         if (gameData.game.currentRound < gameData.topics.length) {
+            gameData.game.screen = 'game';
             renderScreen();
         } else {
-            // Check if game was online to update stats
-            if (gameData.game.isOnlineMode) {
-                updateOnlineStats();
-            }
-            gameData.game.screen = 'endGame';
-            renderScreen();
+            handleEndGame();
         }
     }
-
-    function handleGameExit() {
+    
+    function handleEndGame() {
         if (gameData.game.isOnlineMode) {
-            renderModal('آیا مطمئن هستید که می‌خواهید بازی را ترک کنید؟ با خروج، یک باخت برای شما ثبت می‌شود.', true, () => {
+            if (gameData.game.playerCorrect > gameData.game.botCorrect) {
+                gameData.user.onlineWins++;
+                gameData.user.cups += 10;
+            } else if (gameData.game.playerCorrect < gameData.game.botCorrect) {
                 gameData.user.onlineLosses++;
+                gameData.user.cups -= 5;
+            }
+        }
+        gameData.game.screen = 'endGame';
+        renderScreen();
+    }
+    
+    function handleGameExit() {
+        renderModal('آیا مطمئن هستید که می‌خواهید بازی را ترک کنید؟ این کار به عنوان باخت در بازی آنلاین در نظر گرفته می‌شود.', true, () => {
+            if (gameData.game.isOnlineMode) {
+                gameData.user.onlineLosses++;
+                gameData.user.cups -= 5;
                 gameData.user.totalBans++;
                 localStorage.setItem(BAN_KEY, Date.now().toString());
-                gameData.game.screen = 'mainMenu';
-                renderScreen();
-            });
-        } else {
+            }
             gameData.game.screen = 'mainMenu';
+            resetGame();
             renderScreen();
-        }
-    }
-
-    function updateOnlineStats() {
-        if (gameData.game.playerCorrect > gameData.game.botCorrect) {
-            gameData.user.onlineWins++;
-        } else if (gameData.game.playerCorrect < gameData.game.botCorrect) {
-            gameData.user.onlineLosses++;
-        }
+        });
     }
 
     // Initial render
     renderScreen();
 </script>
+
 </body>
 </html>
