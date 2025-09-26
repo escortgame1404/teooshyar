@@ -136,6 +136,18 @@
     </style>
 </head>
 <body class="overflow-hidden">
+    
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="screen p-8 flex flex-col justify-center items-center h-screen">
+        <div class="w-full max-w-xs text-center">
+            <img src="https://s6.uupload.ir/files/inshot_۲۰۲۵۰۹۲۴_۲۰۱۱۲۴۲۰۰_era.jpg" alt="[تصویر لوگوی بازی چیستان]" class="w-48 h-48 mx-auto mb-8 rounded-full shadow-lg shadow-yellow-400/20">
+            <div class="w-full bg-gray-700 rounded-full h-2.5 mb-4">
+                <div id="loading-progress-bar" class="bg-yellow-400 h-2.5 rounded-full transition-all duration-300 ease-linear" style="width: 0%"></div>
+            </div>
+            <p id="loading-status-text" class="text-gray-300 text-sm">درحال آماده سازی...</p>
+        </div>
+    </div>
+
 
     <!-- Onboarding Screen -->
     <div id="onboarding-screen" class="screen p-8 flex flex-col justify-center items-center h-screen">
@@ -259,6 +271,7 @@
     <script>
         // --- DOM Elements ---
         const screens = {
+            loading: document.getElementById('loading-screen'),
             onboarding: document.getElementById('onboarding-screen'),
             mainMenu: document.getElementById('main-menu-screen'),
             levelSelection: document.getElementById('level-selection-screen'),
@@ -270,6 +283,7 @@
         // --- Game State & Data ---
         const TOTAL_LEVELS = 70;
         const RIDDLES_PER_LEVEL = 5;
+        const STORAGE_KEY = 'chistanGameState';
         
         let gameState = {
             username: '',
@@ -305,11 +319,73 @@
             { q: 'آن چیست که اگر غذا به او بدهی رشد می‌کند و اگر آب بدهی می‌میرد؟', a: 'آتش', options: ['گیاه', 'آتش', 'کوره', 'حیوان'] },
             { q: 'آن چیست که در قرن یک بار، در دقیقه دو بار و در ساعت هیچ بار نمی‌آید؟', a: 'ق', options: ['نقطه', 'حرف', 'ق', 'عدد'] },
         ];
+        
+        // --- Persistence ---
+        function saveGameState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+        }
+
+        function loadGameState() {
+            const savedState = localStorage.getItem(STORAGE_KEY);
+            if (savedState) {
+                // Merge saved state with default state to avoid issues if new properties are added later
+                const loadedState = JSON.parse(savedState);
+                gameState = { ...gameState, ...loadedState };
+                return true;
+            }
+            return false;
+        }
 
         // --- Navigation ---
         function showScreen(screenName) {
             Object.values(screens).forEach(screen => screen.style.display = 'none');
             screens[screenName].style.display = 'flex';
+        }
+
+        // --- Loading Screen Logic ---
+        function startLoading() {
+            const progressBar = document.getElementById('loading-progress-bar');
+            const statusText = document.getElementById('loading-status-text');
+            let progress = 0;
+            const duration = 3500; // 3.5 seconds
+            
+            const texts = ["درحال اتصال به سرور...", "دریافت اطلاعات کاربر...", "ورود به بازی..."];
+            let textIndex = 0;
+            
+            const textInterval = setInterval(() => {
+                if (textIndex < texts.length) {
+                    statusText.textContent = texts[textIndex];
+                    textIndex++;
+                }
+            }, duration / (texts.length + 1));
+
+            const progressInterval = setInterval(() => {
+                progress += 1;
+                progressBar.style.width = `${progress}%`;
+                if(progress >= 100) {
+                    clearInterval(progressInterval);
+                    clearInterval(textInterval);
+                    setTimeout(finishLoading, 300);
+                }
+            }, (duration / 100));
+        }
+        
+        function finishLoading() {
+            if (loadGameState()) {
+                // If data exists, go to main menu
+                updateUI();
+                showScreen('mainMenu');
+                startFallingLetters();
+            } else {
+                // If no data, go to onboarding
+                showScreen('onboarding');
+            }
+        }
+
+        // --- UI Update ---
+        function updateUI() {
+            document.getElementById('menu-username').textContent = gameState.username;
+            document.getElementById('menu-trophy-count').textContent = `🏆 ${gameState.trophies}`;
         }
 
         // --- Onboarding Logic ---
@@ -325,11 +401,11 @@
                 if (username && age && termsCheckbox.checked) {
                     gameState.username = username;
                     gameState.age = age;
-                    document.getElementById('menu-username').textContent = gameState.username;
+                    saveGameState();
+                    updateUI();
                     showScreen('mainMenu');
                     startFallingLetters();
                 } else {
-                    // Using a custom modal would be better, but alert is simpler for this example.
                     alert('لطفاً تمام فیلدها را پر کرده و با قوانین موافقت کنید.');
                 }
             });
@@ -530,6 +606,7 @@
                 if (gameState.currentLevel === gameState.unlockedLevel && gameState.unlockedLevel < TOTAL_LEVELS) {
                     gameState.unlockedLevel++;
                 }
+                saveGameState(); // Save progress after a successful level
             } else {
                 document.getElementById('level-end-title').textContent = 'شکست!';
                 document.getElementById('level-end-title').className = 'text-4xl font-black text-red-400';
@@ -546,7 +623,9 @@
             initLevelSelection();
             initGameplay();
             initLevelEnd();
-            showScreen('onboarding');
+            
+            showScreen('loading');
+            startLoading();
         }
 
         window.onload = init;
