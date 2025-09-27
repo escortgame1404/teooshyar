@@ -30,23 +30,25 @@
             border: 1px solid #FFD700;
         }
         .btn-golden {
-            background: linear-gradient(145deg, #c39d1a, #e6c229, #c39d1a);
+            /* Enhanced Golden Button Style */
+            background: linear-gradient(145deg, #a88a14, #ffd700, #a88a14);
             color: #121212;
-            font-weight: bold;
+            font-weight: 900; /* Extra bold */
             border-radius: 12px;
             padding: 12px 24px;
             text-align: center;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
-            border: 1px solid #FFD700;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4), inset 0 2px 5px rgba(255, 255, 255, 0.5); /* Enhanced Shadow */
+            border: 2px solid #FFD700;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
         }
         .btn-golden:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.5), inset 0 2px 5px rgba(255, 255, 255, 0.7);
         }
         .btn-golden:active {
             transform: translateY(1px);
-            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.2);
+            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.2), inset 0 0 5px rgba(0, 0, 0, 0.2);
         }
         .btn-golden.disabled {
             background: linear-gradient(145deg, #5c5c5c, #7a7a7a, #5c5c5c);
@@ -54,15 +56,19 @@
             cursor: not-allowed;
             box-shadow: none;
             border-color: #666;
+            text-shadow: none;
         }
         .btn-golden.disabled:hover {
             transform: none;
             box-shadow: none;
         }
         .card {
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 16px;
+            /* Enhanced Card Style */
+            background-color: rgba(255, 255, 255, 0.08); /* Slightly lighter background */
+            border: 1px solid rgba(255, 215, 0, 0.3); /* Stronger border */
+            border-radius: 20px; /* More rounded */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
         }
         .split-circle {
             width: 64px;
@@ -82,6 +88,12 @@
             overflow-y: auto;
             animation: fadeIn 0.5s ease-in-out;
         }
+        /* Splash Screen Specific Style */
+        #splash-screen {
+            display: flex; /* Initially show splash screen */
+            background: #000000;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.98); }
             to { opacity: 1; transform: scale(1); }
@@ -117,21 +129,22 @@
             border-color: #555;
             box-shadow: none;
         }
-        .btn-option {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            color: #E0E0E0;
+        .btn-option, .word-btn {
+            /* General button style for options and word puzzles */
+            background-color: rgba(255, 215, 0, 0.15); /* Lighter gold tint */
+            border: 1px solid #FFD700;
+            color: #FFD700;
             padding: 12px;
             border-radius: 10px;
             transition: all 0.2s ease;
-            width: 100%;
+            cursor: pointer;
+            font-weight: bold;
+            text-align: center;
         }
-        .btn-option:hover:not(:disabled) {
-            background-color: rgba(255, 215, 0, 0.2);
-            border-color: #FFD700;
-        }
-        .btn-option:disabled {
-            cursor: not-allowed;
+        .btn-option:hover:not(:disabled), .word-btn:hover:not(:disabled) {
+            background-color: rgba(255, 215, 0, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
         }
         .modal {
             transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -147,13 +160,12 @@
 
         /* --- New CSS for Credits Screen (Top to Bottom Scroll) --- */
         #creators-content {
-            /* Start text completely above the screen */
             transform: translateY(-100vh);
             text-align: center;
             white-space: nowrap;
-            animation: creditRoll 20s linear forwards; /* 20s duration, runs once */
-            animation-play-state: paused; /* Start paused, play on screen show */
-            will-change: transform; /* Performance optimization */
+            animation: creditRoll 30s linear forwards; /* Increased duration for smoother roll */
+            animation-play-state: paused;
+            will-change: transform;
         }
         
         #creators-screen.active #creators-content {
@@ -161,20 +173,21 @@
         }
 
         @keyframes creditRoll {
-            0% { transform: translateY(-100vh); } /* Start far above */
-            100% { transform: translateY(100vh); } /* End far below */
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
         }
         
         .credit-item {
             margin-bottom: 24px;
             padding: 8px 0;
             color: #E0E0E0;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
         }
 
         .credit-role {
             font-size: 1.5rem; /* 24px */
             font-weight: 700;
-            text-shadow: 0 0 5px rgba(255, 215, 0, 0.4);
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.6);
             margin-bottom: 4px;
         }
 
@@ -182,27 +195,28 @@
             font-size: 2.25rem; /* 36px */
             font-weight: 900;
             line-height: 1.2;
+            color: #FFD700;
         }
     </style>
 </head>
 <body class="overflow-hidden">
     
-    <!-- Splash Screen -->
-    <div id="splash-screen" class="screen p-8 flex flex-col justify-center items-center h-screen">
-        <div class="w-full max-w-xs text-center">
-            <img src="https://s6.uupload.ir/files/inshot_۲۰۲۵۰۹۲۴_۲۰۱۱۲۴۲۰۰_era.jpg" alt="[تصویر لوگوی بازی چیستان]" class="w-48 h-48 mx-auto rounded-full shadow-lg shadow-yellow-400/20">
-            <p class="text-gray-300 text-xl mt-8 font-bold">اسکورت گیم تقدیم میکند</p>
+    <!-- Splash Screen (New Initial Screen) -->
+    <div id="splash-screen" class="screen p-8 flex flex-col justify-center items-center h-screen bg-black transition-opacity duration-1000 ease-in-out">
+        <div class="w-full max-w-xs text-center transform scale-90 animate-pulse">
+            <img src="https://s6.uupload.ir/files/inshot_۲۰۲۵۰۹۲۴_۲۰۱۱۲۴۲۰۰_era.jpg" alt="[تصویر لوگوی بازی چیستان]" class="w-48 h-48 mx-auto rounded-full shadow-2xl shadow-yellow-400/40 border-4 border-yellow-500/50">
+            <p class="text-gray-300 text-2xl mt-8 font-black gold-gradient-text animate-bounce">اسکورت گیم تقدیم میکند</p>
         </div>
     </div>
 
 
     <!-- Onboarding Screen -->
     <div id="onboarding-screen" class="screen p-8 flex flex-col justify-center items-center h-screen">
-        <div class="w-full max-w-sm text-center">
+        <div class="w-full max-w-sm text-center card p-6">
             <h1 class="text-4xl font-black gold-gradient-text mb-8">ثبت نام</h1>
             <div class="space-y-6">
-                <input id="username-input" type="text" placeholder="نام کاربری" class="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                <input id="age-input" type="number" placeholder="سن" class="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                <input id="username-input" type="text" placeholder="نام کاربری" class="w-full p-3 bg-gray-900 border border-yellow-400/50 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                <input id="age-input" type="number" placeholder="سن" class="w-full p-3 bg-gray-900 border border-yellow-400/50 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-yellow-400">
                 <div class="flex items-center justify-center space-x-2 space-x-reverse">
                     <input id="terms-checkbox" type="checkbox" class="h-5 w-5 bg-gray-700 border-gray-500 rounded text-yellow-500 focus:ring-yellow-500">
                     <label for="terms-checkbox" class="text-gray-300">با تمامی قوانین موافقم</label>
@@ -216,35 +230,36 @@
     <div id="main-menu-screen" class="screen p-6 flex flex-col h-screen">
         <canvas id="falling-letters-canvas"></canvas>
         <header class="flex justify-between items-center mb-16">
-            <div class="flex items-center space-x-4 space-x-reverse">
+            <div class="flex items-center space-x-4 space-x-reverse card p-3 bg-black/50">
                 <div class="split-circle"></div>
                 <div>
                     <p id="menu-username" class="font-bold text-lg text-white"></p>
-                    <p id="menu-trophy-count" class="text-sm gold-gradient-text font-bold">🏆 0</p>
+                    <p id="menu-trophy-count" class="text-sm gold-gradient-text font-black">🏆 0</p>
                 </div>
             </div>
-            <button id="settings-btn" class="text-3xl">⚙️</button>
+            <button id="settings-btn" class="text-3xl p-2 rounded-full hover:bg-yellow-400/10 transition-colors">⚙️</button>
         </header>
 
-        <main class="flex-grow flex flex-col justify-center items-center space-y-4">
+        <main class="flex-grow flex flex-col justify-center items-center space-y-6">
+            <h2 class="text-5xl font-black gold-gradient-text text-center drop-shadow-lg">چیستان</h2>
             <!-- این دکمه حالا مدال انتخاب حالت بازی را باز می‌کند -->
-            <button id="start-game-btn" class="w-full max-w-[280px] btn-golden text-xl py-3">شروع بازی</button>
-            <button class="w-full max-w-[280px] btn-golden disabled text-xl py-3">
-                بازی آنلاین <span class="text-xs">(به زودی)</span>
+            <button id="start-game-btn" class="w-full max-w-[320px] btn-golden text-2xl py-4">شروع بازی</button>
+            <button class="w-full max-w-[320px] btn-golden disabled text-2xl py-4">
+                بازی آنلاین <span class="text-sm font-normal">(به زودی)</span>
             </button>
         </main>
 
         <footer class="w-full max-w-sm mx-auto pb-2 px-2">
-            <div class="bg-black/30 backdrop-blur-sm border border-yellow-400/20 rounded-2xl grid grid-cols-3 gap-2 text-center p-2">
-                <button class="flex flex-col items-center justify-center text-gray-400 p-2 rounded-lg hover:bg-yellow-400/10 transition-colors text-sm">
+            <div class="bg-black/50 backdrop-blur-sm border border-yellow-400/30 rounded-2xl grid grid-cols-3 gap-2 text-center p-2">
+                <button class="flex flex-col items-center justify-center text-gray-400 p-2 rounded-xl hover:bg-yellow-400/10 transition-colors text-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2_0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                     <span>فروشگاه</span>
                 </button>
-                <button class="flex flex-col items-center justify-center text-gray-400 p-2 rounded-lg hover:bg-yellow-400/10 transition-colors text-sm">
+                <button class="flex flex-col items-center justify-center text-gray-400 p-2 rounded-xl hover:bg-yellow-400/10 transition-colors text-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.539 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.539-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
                     <span>چالش‌ها</span>
                 </button>
-                <button class="flex flex-col items-center justify-center text-gray-400 p-2 rounded-lg hover:bg-yellow-400/10 transition-colors text-sm">
+                <button class="flex flex-col items-center justify-center text-gray-400 p-2 rounded-xl hover:bg-yellow-400/10 transition-colors text-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span>تاریخچه</span>
                 </button>
@@ -252,9 +267,9 @@
         </footer>
     </div>
     
-    <!-- Game Mode Selection Modal (جدید) -->
-    <div id="mode-selection-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
-        <div class="card p-8 rounded-lg w-11/12 max-w-md text-center space-y-6">
+    <!-- Game Mode Selection Modal -->
+    <div id="mode-selection-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
+        <div class="card p-8 rounded-2xl w-11/12 max-w-lg text-center space-y-6">
             <h2 class="text-3xl font-bold gold-gradient-text mb-6">انتخاب حالت بازی</h2>
             
             <!-- 2 Old Mode Button -->
@@ -269,22 +284,28 @@
                 <span class="text-sm font-normal mt-1 text-gray-900">سوالات سخت، تایپ پاسخ، زمان محدود</span>
             </button>
             
-            <button id="close-mode-selection-btn" class="mt-4 w-full p-3 bg-gray-700 rounded-lg text-white hover:bg-gray-600 transition-colors">بازگشت</button>
+            <!-- 4 Flash Pro Mode Button (NEW) -->
+            <button onclick="selectGameMode('word_puzzle')" class="w-full btn-golden text-xl py-4 flex flex-col items-center">
+                <span class="text-2xl font-black">4 فلش پرو (جدید!)</span>
+                <span class="text-sm font-normal mt-1 text-gray-900">کلمات درهم، ساخت پاسخ، زمان محدود</span>
+            </button>
+            
+            <button id="close-mode-selection-btn" class="mt-4 w-full p-3 bg-gray-700 rounded-xl text-white hover:bg-gray-600 transition-colors">بازگشت</button>
         </div>
     </div>
 
     <!-- Settings Modal -->
-    <div id="settings-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
-        <div class="card p-8 rounded-lg w-11/12 max-w-md text-center space-y-4">
-            <h2 class="text-2xl font-bold gold-gradient-text mb-6">تنظیمات</h2>
-            <button class="w-full p-3 bg-gray-700 rounded-lg">کد هدیه</button>
-            <button id="creators-btn" class="w-full p-3 bg-gray-700 rounded-lg hover:bg-yellow-400/20 transition-colors">سازندگان</button> <!-- NEW Button -->
-            <button class="w-full p-3 bg-gray-700 rounded-lg">پشتیبانی</button>
-            <button id="close-settings-btn" class="mt-6 w-full btn-golden">بستن</button>
+    <div id="settings-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
+        <div class="card p-8 rounded-2xl w-11/12 max-w-md text-center space-y-4">
+            <h2 class="text-3xl font-bold gold-gradient-text mb-6">تنظیمات</h2>
+            <button class="w-full p-3 bg-gray-700 rounded-xl hover:bg-yellow-400/20 transition-colors">کد هدیه</button>
+            <button id="creators-btn" class="w-full p-3 bg-gray-700 rounded-xl hover:bg-yellow-400/20 transition-colors">سازندگان و اعتبارات</button>
+            <button class="w-full p-3 bg-gray-700 rounded-xl hover:bg-yellow-400/20 transition-colors">پشتیبانی</button>
+            <button id="close-settings-btn" class="mt-6 w-full btn-golden text-lg">بستن</button>
         </div>
     </div>
 
-    <!-- Creators Screen (Credit Roll) - NEW -->
+    <!-- Creators Screen (Credit Roll) -->
     <div id="creators-screen" class="screen fixed inset-0 bg-black/95 flex flex-col items-center z-50">
         <header class="relative w-full text-center py-6 bg-black/50">
             <h1 class="text-3xl font-black gold-gradient-text">اعتبارات سازندگان</h1>
@@ -304,6 +325,13 @@
                     <p class="credit-role gold-gradient-text">برنامه نویس سرور و برنامه نویس دوم</p>
                     <p class="credit-name">سید ابولفضل سجادی</p>
                 </div>
+
+                <!-- NEW Credit: وحیدفریدونی طراح رابط کاربری -->
+                <div class="credit-item mt-20">
+                    <p class="credit-role gold-gradient-text">طراح رابط کاربری</p>
+                    <p class="credit-name">وحیدفریدونی</p>
+                </div>
+                <!-- End NEW Credit -->
 
                 <div class="credit-item mt-20 text-4xl font-bold">
                     <p class="gold-gradient-text">اسکورت گیم</p>
@@ -333,7 +361,7 @@
     <div id="gameplay-screen" class="screen p-6 flex flex-col h-screen">
         <header class="flex items-center justify-between mb-2">
             <button id="back-to-levels-btn" class="text-3xl">➡️</button>
-            <div id="timer-display" class="hidden text-center card px-4 py-2 rounded-lg bg-red-900/50 border-red-500/50">
+            <div id="timer-display" class="hidden text-center card px-4 py-2 rounded-xl bg-red-900/50 border-red-500/50">
                 <p class="text-lg font-bold">زمان:</p>
                 <p id="timer-count" class="text-3xl font-black text-red-400">15</p>
             </div>
@@ -360,9 +388,24 @@
                 <!-- Input Container (For 2.5 Flash Mode) -->
                 <div id="input-container" class="hidden flex flex-col gap-4 w-full">
                     <input type="text" id="flash-answer-input" placeholder="پاسخ را اینجا تایپ کنید..." 
-                            class="w-full p-4 bg-gray-800 border border-yellow-400/50 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-colors text-lg"
+                            class="w-full p-4 bg-gray-900 border border-yellow-400/50 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-colors text-lg"
                             style="caret-color: #FFD700;">
                     <button id="flash-submit-btn" class="w-full btn-golden text-xl py-3">ثبت پاسخ</button>
+                </div>
+                
+                <!-- Word Puzzle Container (For 4 Flash Pro Mode) - NEW -->
+                <div id="word-puzzle-container" class="hidden flex flex-col gap-6 w-full">
+                    <!-- Answer Area (Words assembled by user) -->
+                    <div id="word-answer-area" class="min-h-[60px] p-4 card flex flex-wrap justify-center content-center gap-2 bg-gray-900/50 border-yellow-400/30">
+                        <p id="word-answer-placeholder" class="text-gray-500 text-sm">برای ساخت پاسخ، کلمات زیر را بچینید</p>
+                    </div>
+                    
+                    <!-- Word Bank (Scrambled Words) -->
+                    <div id="word-bank" class="flex flex-wrap justify-center gap-3 p-4 card bg-black/50 border-yellow-400/20">
+                        <!-- Word buttons will be generated here -->
+                    </div>
+                    
+                    <button id="word-puzzle-submit-btn" class="w-full btn-golden text-xl py-3 disabled">ثبت پاسخ</button>
                 </div>
             </div>
         </main>
@@ -370,17 +413,17 @@
     
     <!-- Level End Screen -->
     <div id="level-end-screen" class="screen p-8 flex flex-col justify-center items-center text-center h-screen">
-        <div class="card p-8 rounded-lg w-11/12 max-w-md space-y-6">
+        <div class="card p-8 rounded-2xl w-11/12 max-w-md space-y-6">
             <h2 id="level-end-title" class="text-4xl font-black"></h2>
-            <div>
+            <div class="space-y-2">
                 <p class="text-xl">پاسخ‌های درست: <span id="correct-answers" class="text-green-400 font-bold"></span></p>
                 <p class="text-xl">پاسخ‌های غلط: <span id="wrong-answers" class="text-red-400 font-bold"></span></p>
             </div>
             <div class="flex space-x-4 space-x-reverse">
-                <button id="retry-level-btn" class="w-full btn-golden bg-gray-600 border-gray-500">تلاش مجدد</button>
-                <button id="next-level-btn" class="w-full btn-golden">مرحله بعد</button>
+                <button id="retry-level-btn" class="w-full btn-golden text-lg bg-gray-600 border-gray-500">تلاش مجدد</button>
+                <button id="next-level-btn" class="w-full btn-golden text-lg">مرحله بعد</button>
             </div>
-            <button id="end-back-to-levels-btn" class="mt-4 w-full p-3 bg-gray-700 rounded-lg">بازگشت به لیست مراحل</button>
+            <button id="end-back-to-levels-btn" class="mt-4 w-full p-3 bg-gray-700 rounded-xl hover:bg-yellow-400/20 transition-colors">بازگشت به لیست مراحل</button>
         </div>
     </div>
 
@@ -402,11 +445,18 @@
         const timerCount = document.getElementById('timer-count');
         const inputContainer = document.getElementById('input-container');
         const optionsContainer = document.getElementById('options-container');
+        // NEW Word Puzzle Elements
+        const wordPuzzleContainer = document.getElementById('word-puzzle-container');
+        const wordAnswerArea = document.getElementById('word-answer-area');
+        const wordBank = document.getElementById('word-bank');
+        const wordPuzzleSubmitBtn = document.getElementById('word-puzzle-submit-btn');
+        const wordAnswerPlaceholder = document.getElementById('word-answer-placeholder');
 
         // --- Game State & Data ---
         const TOTAL_LEVELS = 70;
         const RIDDLES_PER_LEVEL = 5;
         const FLASH_TIME_LIMIT = 15; // seconds
+        const WORD_PUZZLE_TIME_LIMIT = 20; // seconds for 4 Flash Pro
         const STORAGE_KEY = 'chistanGameState';
         
         let gameState = {
@@ -419,9 +469,10 @@
             currentRiddles: [],
             currentRiddleIndex: 0,
             score: 0,
-            currentMode: 'old', // 'old' or 'flash'
+            currentMode: 'old', // 'old', 'flash', or 'word_puzzle'
             correctAnswers: 0, // For end screen tracking
             wrongAnswers: 0, // For end screen tracking
+            currentPuzzleWords: [], // Stores word objects for word puzzle
         };
 
         let gameTimer;
@@ -450,9 +501,8 @@
             { q: 'آن چیست که در قرن یک بار، در دقیقه دو بار و در ساعت هیچ بار نمی‌آید؟', a: 'ق', options: ['نقطه', 'حرف', 'ق', 'عدد'] },
         ];
         
-        // Harder Riddles for 2.5 Flash Mode (Typing required) - EXPANDED with Gemini-2.5-Flash
+        // Harder Riddles for 2.5 Flash Mode (Typing required)
         const hardRiddles = [
-            // Existing riddles
             { q: 'آن چیست که وقتی ایستاده است می‌خوابد و وقتی راه می‌رود بیدار است؟', a: 'قطار', options: [] },
             { q: 'من هیچ بدنی ندارم اما می‌توانم راه بروم. من دهانی ندارم اما می‌توانم حرف بزنم. من کیستم؟', a: 'پژواک', options: [] },
             { q: 'آن چیست که اگر آن را داشته باشی می‌خواهی به اشتراک بگذاری، و اگر به اشتراک بگذاری دیگر آن را نداری؟', a: 'راز', options: [] },
@@ -463,8 +513,6 @@
             { q: 'سقف من آبی است، کف من سبزی است، و با آب هم پر شده‌ام. من کیستم؟', a: 'استخر', options: [] },
             { q: 'آن چیست که مال شماست اما دیگران بیشتر از شما از آن استفاده می‌کنند؟', a: 'اسم', options: [] },
             { q: 'چه چیزی بالا می‌رود اما هرگز پایین نمی‌آید؟', a: 'سن', options: [] },
-
-            // NEW Gemini-Generated Riddles (20+ riddles added for more challenging gameplay)
             { q: 'چهار حرف است، هرچه بیشتر می‌خورم گرسنه‌تر می‌شوم.', a: 'آتش', options: [] },
             { q: 'من همیشه خیس هستم، مهم نیست چقدر آفتابی باشد.', a: 'زبان', options: [] },
             { q: 'آن چیست که هرگز سؤال نمی‌پرسد، اما همیشه نیاز به پاسخ دارد؟', a: 'تلفن', options: [] },
@@ -476,30 +524,46 @@
             { q: 'سه چشم دارم و فقط یک پا. من کیستم؟', a: 'چراغ‌راهنمایی', options: [] },
             { q: 'من همیشه به گذشته نگاه می‌کنم، اما نمی‌توانم جلو را ببینم.', a: 'آینه', options: [] },
             { q: 'با یک انگشت به تو اشاره می‌کنم، اما راه را به هیچ کس نشان نمی‌دهم.', a: 'خورشید', options: [] },
-            { q: 'چند بار می‌توانید عدد ۱ را از ۲۵ کم کنید؟', a: 'یکبار', options: [] },
             { q: 'آن چیست که باید بشکنی تا از آن استفاده کنی؟', a: 'تخم‌مرغ', options: [] },
             { q: 'چه چیزی همیشه در حال پر کردن است اما هرگز پر نمی‌شود؟', a: 'لانه', options: [] },
-            { q: 'من یک پتو هستم، اما هیچ گاه مرا گرم نمی‌کند.', a: 'برف', options: [] },
-            { q: 'آن چیست که هم می‌تواند بسته باشد و هم باز، و همیشه نزدیک توست؟', a: 'دست', options: [] },
-            { q: 'چه چیزی را نمی‌توانید بخورید اما برای خوردن لازم است؟', a: 'قاشق', options: [] },
-            { q: 'من یک بار در یک قرن و دو بار در یک دهه ظاهر می‌شوم.', a: 'حرف', options: [] },
-            { q: 'هر چه بیشتر از من ببرید، بزرگتر می‌شوم.', a: 'چاله', options: [] },
             { q: 'یک خانه سبزم که داخلش یک خانه سفید است و درون آن یک خانه قرمز و پر از بچه‌های سیاه است.', a: 'هندوانه', options: [] },
-            { q: 'چه چیزی دهان دارد اما صحبت نمی‌کند، بستر دارد اما نمی‌خوابد؟', a: 'رودخانه', options: [] }, // تکراری، یکی را حذف می‌کنیم
             { q: 'چه چیزی با داشتن وزن بسیار کم می‌تواند یک کشتی بزرگ را در اقیانوس متوقف کند؟', a: 'لنگر', options: [] },
             { q: 'من را می‌سازند، نگهداری می‌کنند، تغییر می‌دهند، و دور می‌اندازند، اما هیچ‌گاه خورده نمی‌شوم.', a: 'پول', options: [] },
-        ].filter(riddle => riddle.a !== 'رودخانه'); // Remove duplicate 'رودخانه'
-        
+        ].filter(riddle => normalizeAnswer(riddle.a) !== 'رودخانه'); 
+
+        // New Riddles for 4 Flash Pro Mode (Word Puzzle - Scrambled Words)
+        const wordPuzzleRiddles = [
+            // { q: 'سوال', a: 'پاسخ درست', scrambledWords: ['پاسخ', 'درست'] } -> The words the user needs to assemble
+            { q: 'شهر سی متری چیست؟', a: 'سیامک', scrambledWords: ['سی', 'ا', 'مک'] },
+            { q: 'سه کلمه که با آن پرنده می‌سازند.', a: 'بالپرنده', scrambledWords: ['بال', 'نده', 'پر', ''] },
+            { q: 'منبع انرژی خورشیدی چیست؟', a: 'آفتابگردان', scrambledWords: ['آفتاب', 'گردان'] },
+            { q: 'وسیله‌ای برای خواندن فکر.', a: 'کتابخوان', scrambledWords: ['کتاب', 'خوان'] },
+            { q: 'چه کسی در تمام شهرها خانه دارد؟', a: 'پستچی', scrambledWords: ['پست', 'چی'] },
+            { q: 'چه چیزی در گوش است ولی هرگز شنیده نمی‌شود؟', a: 'سکوت', scrambledWords: ['س', 'کوت', ''] },
+            { q: 'آن چیست که فقط وقتی که خیس است، می‌تواند خشک کند؟', a: 'حوله', scrambledWords: ['حول', 'ه', ''] },
+            { q: 'چه موقع یک شخص باهوش به دیوار نگاه می‌کند؟', a: 'وقتیکه', scrambledWords: ['وقتی', 'که', ''] },
+            { q: 'آن چیست که در طول روز کوتاه و در شب دراز است؟', a: 'تاریکی', scrambledWords: ['تار', 'یکی', ''] },
+            { q: 'آن چیست که مال شماست ولی دیگران بیشتر استفاده می‌کنند؟', a: 'نامشما', scrambledWords: ['نام', 'شما', ''] },
+        ];
+
+
         // --- Helper Functions ---
         function normalizeAnswer(text) {
             // Remove spaces, normalize Farsi characters (ی/ي, ک/ك) and ensure comparison is case-insensitive
             return text.trim().replace(/ی/g, 'ي').replace(/ک/g, 'ك').toLowerCase().replace(/\s/g, ''); 
         }
 
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
         // --- Persistence ---
         function saveGameState() {
             try {
-                // Only save the necessary state for persistence
                 const stateToSave = {
                     username: gameState.username,
                     age: gameState.age,
@@ -518,7 +582,6 @@
                 const savedState = localStorage.getItem(STORAGE_KEY);
                 if (savedState) {
                     const loadedState = JSON.parse(savedState);
-                    // Merge loaded state with current state, only using persistent fields
                     gameState = { ...gameState, ...loadedState };
                     return true;
                 }
@@ -543,6 +606,10 @@
                 currentScreen.style.display = 'flex';
             }
 
+            if (screenName !== 'gameplay') {
+                stopTimer();
+            }
+
             // Start creators animation if navigating to creators screen
             if (screenName === 'creators') {
                 initCreatorsScreen();
@@ -555,11 +622,12 @@
             document.getElementById('menu-trophy-count').textContent = `🏆 ${gameState.trophies}`;
         }
 
-        // --- Timer Logic (New) ---
+        // --- Timer Logic ---
         function startTimer() {
-            if (gameState.currentMode !== 'flash') return;
+            if (gameState.currentMode === 'old') return;
 
-            let timeRemaining = FLASH_TIME_LIMIT;
+            const timeLimit = gameState.currentMode === 'flash' ? FLASH_TIME_LIMIT : WORD_PUZZLE_TIME_LIMIT;
+            let timeRemaining = timeLimit;
             timerCount.textContent = timeRemaining;
             timerDisplay.classList.remove('hidden');
             timerDisplay.classList.remove('timer-flash');
@@ -577,7 +645,7 @@
 
                 if (timeRemaining <= 0) {
                     clearInterval(gameTimer);
-                    checkAnswer(null, null); // Answer is null, marks as wrong
+                    checkAnswer(null, null); // Time's up, marks as wrong
                 }
             }, 1000);
         }
@@ -606,413 +674,394 @@
                     showScreen('mainMenu');
                     startFallingLetters();
                 } else {
-                    // Custom non-alert message box for better UX
-                    alertBox('لطفاً تمام فیلدها را پر کرده و با قوانین موافقت کنید.', 'red');
+                    console.error("لطفا تمام فیلدها را پر کرده و با قوانین موافقت کنید.");
                 }
             });
         }
         
-        // Custom Alert/Message Box (Replaces alert())
-        function alertBox(message, type = 'yellow') {
-            const existingBox = document.querySelector('.custom-alert-box');
-            if (existingBox) existingBox.remove();
-            
-            const colorClass = type === 'red' ? 'bg-red-500' : 'bg-yellow-500';
+        // --- Splash Screen Logic (NEW) ---
+        function initSplash() {
+            // Check if game state is already loaded (user has registered)
+            const registered = loadGameState() && gameState.username;
 
-            const box = document.createElement('div');
-            box.className = `custom-alert-box fixed top-5 left-1/2 -translate-x-1/2 p-4 rounded-lg shadow-xl text-black font-bold z-[100] ${colorClass} transition-opacity duration-300`;
-            box.textContent = message;
-            document.body.appendChild(box);
-
+            // Wait 7 seconds before proceeding
             setTimeout(() => {
-                box.style.opacity = '0';
-                setTimeout(() => box.remove(), 300);
-            }, 3000);
-        }
-
-        // --- Main Menu Logic ---
-        function initMainMenu() {
-            // Changed start-game-btn to show the mode selection modal
-            document.getElementById('start-game-btn').addEventListener('click', () => {
-                modeSelectionModal.style.display = 'flex';
-            });
-            document.getElementById('close-mode-selection-btn').addEventListener('click', () => {
-                modeSelectionModal.style.display = 'none';
-            });
-
-            document.getElementById('settings-btn').addEventListener('click', () => settingsModal.style.display = 'flex');
-            document.getElementById('close-settings-btn').addEventListener('click', () => settingsModal.style.display = 'none');
-            
-            // NEW: Creator button logic
-            document.getElementById('creators-btn').addEventListener('click', () => {
-                settingsModal.style.display = 'none';
-                showScreen('creators');
-            });
-        }
-
-        // NEW: Creators Screen Logic
-        function initCreatorsScreen() {
-            const screen = document.getElementById('creators-screen');
-            const content = document.getElementById('creators-content');
-
-            // Reset animation state
-            content.style.animation = 'none';
-            content.offsetHeight; // Trigger reflow
-            content.style.animation = null;
-            
-            // Re-apply the animation by setting the class
-            screen.classList.add('active');
-
-            // Listen for the animation end to handle looping/resetting if needed
-            // In this implementation, the animation runs once and stops, showing an empty screen.
-            // If you want it to loop indefinitely, you can change 'forwards' to 'infinite' in CSS.
-            // Using 'forwards' here ensures it respects the user's desire for a one-time credit roll.
-
-            document.getElementById('back-from-creators-btn').onclick = () => showScreen('mainMenu');
-        }
-        
-        // Select Game Mode function (Global)
-        window.selectGameMode = function(mode) {
-            gameState.currentMode = mode;
-            modeSelectionModal.style.display = 'none';
-            showScreen('levelSelection');
-            renderLevelGrid();
-        }
-
-        // --- Falling Letters Animation (No Change) ---
-        function startFallingLetters() {
-            const canvas = document.getElementById('falling-letters-canvas');
-            if(!canvas) return;
-            const ctx = canvas.getContext('2d');
-
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            const letters = 'ابپتثجچحخدذرزژسشصضطظعغفقکگلمنوهی';
-            const fontSize = 18;
-            const columns = canvas.width / fontSize;
-            const drops = [];
-
-            for (let x = 0; x < columns; x++) {
-                drops[x] = 1;
-            }
-
-            function draw() {
-                ctx.fillStyle = 'rgba(18, 18, 18, 0.05)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                ctx.fillStyle = '#FFD700'; // Gold color
-                ctx.font = fontSize + 'px Vazirmatn';
-
-                for (let i = 0; i < drops.length; i++) {
-                    const text = letters[Math.floor(Math.random() * letters.length)];
-                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                        drops[i] = 0;
+                screens.splash.style.opacity = '0';
+                setTimeout(() => {
+                    if (registered) {
+                        showScreen('mainMenu');
+                        updateUI();
+                        startFallingLetters();
+                    } else {
+                        showScreen('onboarding');
                     }
-                    drops[i]++;
+                }, 1000); // 1 second for opacity transition to finish
+            }, 7000); // 7 second delay
+        }
+
+        // --- Menu Logic ---
+        document.getElementById('start-game-btn').addEventListener('click', () => {
+            modeSelectionModal.classList.remove('hidden');
+        });
+        document.getElementById('close-mode-selection-btn').addEventListener('click', () => {
+            modeSelectionModal.classList.add('hidden');
+        });
+        document.getElementById('settings-btn').addEventListener('click', () => {
+            settingsModal.classList.remove('hidden');
+        });
+        document.getElementById('close-settings-btn').addEventListener('click', () => {
+            settingsModal.classList.add('hidden');
+        });
+        document.getElementById('creators-btn').addEventListener('click', () => {
+            settingsModal.classList.add('hidden');
+            showScreen('creators');
+        });
+
+        // --- Creators Screen Logic ---
+        function initCreatorsScreen() {
+            const content = document.getElementById('creators-content');
+            // Reset animation by removing and re-adding the class
+            content.style.animation = 'none';
+            void content.offsetHeight; // Trigger reflow
+            content.style.animation = '';
+            
+            screens.creators.classList.add('active');
+            
+            // Set animation duration dynamically based on content height if needed, but 30s is fine for now
+            // After the animation finishes (30s), loop back to the main menu
+            setTimeout(() => {
+                if (screens.creators.style.display !== 'none') {
+                    showScreen('mainMenu');
                 }
-            }
-            setInterval(draw, 40);
+            }, 30000); 
+        }
+
+        document.getElementById('back-from-creators-btn').addEventListener('click', () => {
+            showScreen('settings'); // Go back to settings modal
+            settingsModal.classList.remove('hidden');
+        });
+        
+
+        // --- Game Mode Selection ---
+        function selectGameMode(mode) {
+            gameState.currentMode = mode;
+            modeSelectionModal.classList.add('hidden');
+            initLevelSelection();
         }
 
         // --- Level Selection Logic ---
         function initLevelSelection() {
-            document.getElementById('back-to-menu-btn').addEventListener('click', () => showScreen('mainMenu'));
-        }
+            showScreen('levelSelection');
+            const levelGrid = document.getElementById('level-grid');
+            levelGrid.innerHTML = ''; // Clear previous grid
 
-        function renderLevelGrid() {
-            const grid = document.getElementById('level-grid');
-            grid.innerHTML = '';
-            // Flash mode only has one "level" in this iteration, but we keep the structure for future expansion
-            const maxLevel = gameState.currentMode === 'flash' ? 1 : TOTAL_LEVELS; 
+            for (let i = 1; i <= TOTAL_LEVELS; i++) {
+                const isUnlocked = i <= gameState.unlockedLevel;
+                const isCompleted = gameState.completedLevels.includes(i);
+                
+                const statusClass = isCompleted ? 'completed' : (isUnlocked ? 'unlocked' : 'locked');
 
-            for (let i = 1; i <= maxLevel; i++) {
-                const levelIcon = document.createElement('button');
+                const levelIcon = document.createElement('div');
+                levelIcon.className = `level-icon w-14 h-14 md:w-16 md:h-16 flex items-center justify-center rounded-lg text-2xl font-black ${statusClass}`;
                 levelIcon.textContent = i;
-                levelIcon.className = 'level-icon w-16 h-16 rounded-full flex items-center justify-center font-bold text-2xl';
-
-                const isUnlocked = i <= gameState.unlockedLevel || gameState.currentMode === 'flash';
+                levelIcon.dataset.level = i;
 
                 if (isUnlocked) {
-                    // For old mode, check completion. For flash, always unlocked.
-                    if (gameState.currentMode === 'old' && gameState.completedLevels.includes(i)) {
-                        levelIcon.classList.add('completed');
-                    } else {
-                        levelIcon.classList.add('unlocked');
-                    }
-                    // Pass the current mode to startGame
-                    levelIcon.onclick = () => startGame(i, gameState.currentMode); 
-                } else {
-                    levelIcon.classList.add('locked');
-                    levelIcon.innerHTML = '&#128274;'; // Lock emoji
+                    levelIcon.addEventListener('click', () => {
+                        startGame(i);
+                    });
                 }
-                grid.appendChild(levelIcon);
-            }
-            // Update header text based on mode
-            if (gameState.currentMode === 'flash') {
-                document.querySelector('#level-selection-screen h1').textContent = '2.5 Flash - چالش سرعت';
-            } else {
-                document.querySelector('#level-selection-screen h1').textContent = 'فصل اول';
+                levelGrid.appendChild(levelIcon);
             }
         }
         
-        // --- Gameplay Logic ---
-        function initGameplay() {
-            document.getElementById('back-to-levels-btn').addEventListener('click', () => {
-                stopTimer(); // Stop timer if active
-                showScreen('levelSelection');
-            });
+        document.getElementById('back-to-menu-btn').addEventListener('click', () => {
+            showScreen('mainMenu');
+        });
 
-            // Flash Mode Submit Button Listener
-            document.getElementById('flash-submit-btn').addEventListener('click', handleFlashAnswer);
-            document.getElementById('flash-answer-input').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    handleFlashAnswer();
-                }
-            });
-        }
-        
-        function handleFlashAnswer() {
-            const input = document.getElementById('flash-answer-input');
-            const userAnswer = input.value;
-            // The checkAnswer function is now universal
-            checkAnswer(userAnswer, input); 
-        }
-
-        function getRiddlesForLevel(level, mode) {
-            if (mode === 'flash') {
-                // In flash mode, select RIDDLES_PER_LEVEL random hard riddles
-                // Fisher-Yates (Knuth) Shuffle for randomness
-                const shuffled = [...hardRiddles];
-                for (let i = shuffled.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-                }
-                return shuffled.slice(0, RIDDLES_PER_LEVEL);
-            } else {
-                // Classic mode: Select 5 riddles sequentially based on the level number
-                const startIndex = (level - 1) * RIDDLES_PER_LEVEL;
-                return allRiddles.slice(startIndex, startIndex + RIDDLES_PER_LEVEL);
-            }
-        }
-
-        function startGame(levelNumber, mode) {
-            gameState.currentLevel = levelNumber;
+        // --- Game Logic ---
+        function startGame(level) {
+            gameState.currentLevel = level;
             gameState.currentRiddleIndex = 0;
-            gameState.score = 0;
             gameState.correctAnswers = 0;
             gameState.wrongAnswers = 0;
-            gameState.currentRiddles = getRiddlesForLevel(levelNumber, mode);
-
-            if (gameState.currentRiddles.length === 0) {
-                alertBox('سؤالات این مرحله هنوز آماده نیست!', 'red');
-                showScreen('levelSelection');
-                return;
+            gameState.score = 0;
+            
+            // Select riddles based on mode and level
+            let riddleSource = allRiddles;
+            if (gameState.currentMode === 'flash') {
+                riddleSource = hardRiddles;
+            } else if (gameState.currentMode === 'word_puzzle') {
+                riddleSource = wordPuzzleRiddles;
             }
 
-            // Set up UI based on mode
-            const isFlashMode = mode === 'flash';
-            timerDisplay.classList.toggle('hidden', !isFlashMode);
-            inputContainer.classList.toggle('hidden', !isFlashMode);
-            inputContainer.classList.toggle('flex', isFlashMode);
-            optionsContainer.classList.toggle('hidden', isFlashMode);
-
-            if (isFlashMode) {
-                document.getElementById('flash-answer-input').value = '';
+            // Simple randomization: take a set of riddles offset by the level number
+            const startIndex = (level - 1) * RIDDLES_PER_LEVEL % riddleSource.length;
+            gameState.currentRiddles = [];
+            for (let i = 0; i < RIDDLES_PER_LEVEL; i++) {
+                gameState.currentRiddles.push(riddleSource[(startIndex + i) % riddleSource.length]);
             }
             
+            // Randomly shuffle the final selection for diversity
+            gameState.currentRiddles = shuffleArray(gameState.currentRiddles);
+
             showScreen('gameplay');
-            loadRiddle();
+            updateGameUI();
+            nextRiddle();
         }
 
-        function loadRiddle() {
-            if (gameState.currentRiddleIndex >= gameState.currentRiddles.length) {
+        function updateGameUI() {
+            document.getElementById('game-level-number').textContent = gameState.currentLevel;
+            document.getElementById('game-score').textContent = gameState.score;
+            const progress = (gameState.currentRiddleIndex / RIDDLES_PER_LEVEL) * 100;
+            document.getElementById('game-progress-bar').style.width = `${progress}%`;
+        }
+
+        function nextRiddle() {
+            stopTimer(); // Stop timer before setting up next riddle
+
+            if (gameState.currentRiddleIndex >= RIDDLES_PER_LEVEL) {
                 endLevel();
                 return;
             }
 
             const currentRiddle = gameState.currentRiddles[gameState.currentRiddleIndex];
-            
-            document.getElementById('game-level-number').textContent = `${gameState.currentRiddleIndex + 1}/${gameState.currentRiddles.length}`;
-            document.getElementById('game-score').textContent = gameState.score;
             document.getElementById('riddle-question').textContent = currentRiddle.q;
-            
-            const progress = ((gameState.currentRiddleIndex) / gameState.currentRiddles.length) * 100;
-            document.getElementById('game-progress-bar').style.width = `${progress}%`;
+
+            // Show/Hide UI elements based on the current mode
+            optionsContainer.classList.add('hidden');
+            inputContainer.classList.add('hidden');
+            wordPuzzleContainer.classList.add('hidden');
 
             if (gameState.currentMode === 'old') {
-                renderOptions(currentRiddle);
-            } else {
-                // Flash mode cleanup
-                document.getElementById('flash-answer-input').value = '';
-                document.getElementById('flash-answer-input').focus();
+                optionsContainer.classList.remove('hidden');
+                setupOptionsMode(currentRiddle);
+            } else if (gameState.currentMode === 'flash') {
+                inputContainer.classList.remove('hidden');
+                document.getElementById('flash-answer-input').value = ''; // Clear previous input
+                document.getElementById('flash-submit-btn').onclick = () => checkAnswer(document.getElementById('flash-answer-input').value, currentRiddle.a);
+                startTimer();
+            } else if (gameState.currentMode === 'word_puzzle') {
+                wordPuzzleContainer.classList.remove('hidden');
+                setupWordPuzzleMode(currentRiddle);
+                wordPuzzleSubmitBtn.onclick = () => checkWordPuzzleAnswer(currentRiddle.a);
                 startTimer();
             }
         }
 
-        function renderOptions(riddle) {
+        function setupOptionsMode(riddle) {
             optionsContainer.innerHTML = '';
-            riddle.options.forEach(option => {
+            shuffleArray(riddle.options).forEach(option => {
                 const btn = document.createElement('button');
                 btn.className = 'btn-option';
                 btn.textContent = option;
-                btn.onclick = () => checkAnswer(option, btn);
+                btn.onclick = () => checkAnswer(option, riddle.a);
                 optionsContainer.appendChild(btn);
             });
         }
 
-        function checkAnswer(userAnswer, element) {
-            const currentRiddle = gameState.currentRiddles[gameState.currentRiddleIndex];
-            
-            // Normalize correct answer from data
-            const normalizedCorrectAnswer = normalizeAnswer(currentRiddle.a); 
-            // Normalize user answer
-            const normalizedUserAnswer = userAnswer ? normalizeAnswer(userAnswer) : '';
-            
-            const isCorrect = normalizedUserAnswer === normalizedCorrectAnswer;
+        // --- Word Puzzle Logic (NEW) ---
+        function setupWordPuzzleMode(riddle) {
+            wordAnswerArea.innerHTML = '';
+            wordBank.innerHTML = '';
+            wordAnswerPlaceholder.classList.remove('hidden');
+            wordPuzzleSubmitBtn.classList.add('disabled');
+            wordPuzzleSubmitBtn.disabled = true;
 
-            stopTimer(); // Stop timer immediately after input in flash mode
+            const words = shuffleArray([...riddle.scrambledWords]).filter(w => w.trim() !== '');
+            gameState.currentPuzzleWords = []; // Reset words in answer area
 
-            if (element && gameState.currentMode === 'old') {
-                // Classic Mode Visual Feedback
-                const buttons = optionsContainer.querySelectorAll('button');
-                buttons.forEach(b => b.disabled = true);
-                
-                if (isCorrect) {
-                    element.classList.add('bg-green-600', 'border-green-400');
-                } else {
-                    element.classList.add('bg-red-600', 'border-red-400');
-                    // Highlight the correct answer
-                    const correctAnswerBtn = Array.from(buttons).find(b => normalizeAnswer(b.textContent) === normalizedCorrectAnswer);
-                    if (correctAnswerBtn) {
-                        correctAnswerBtn.classList.add('bg-green-600', 'border-green-400');
-                    }
-                }
-            } else if (element && gameState.currentMode === 'flash') {
-                 // Flash Mode Visual Feedback (Input)
-                if (isCorrect) {
-                    element.classList.add('border-green-400', 'bg-green-900/50');
-                    document.getElementById('flash-submit-btn').classList.add('bg-green-600');
-                    document.getElementById('flash-submit-btn').textContent = 'درست! ✅';
-                } else {
-                    element.classList.add('border-red-400', 'bg-red-900/50');
-                    document.getElementById('flash-submit-btn').classList.add('bg-red-600');
-                    document.getElementById('flash-submit-btn').textContent = `اشتباه! (پاسخ: ${currentRiddle.a}) ❌`;
-                }
-                element.disabled = true;
-                document.getElementById('flash-submit-btn').disabled = true;
-            } else {
-                // Handle Flash Mode timeout (no visual element, marks as wrong)
-                document.getElementById('riddle-question').textContent = `زمان به پایان رسید! (پاسخ: ${currentRiddle.a})`;
-                document.getElementById('flash-answer-input').disabled = true;
-                document.getElementById('flash-submit-btn').disabled = true;
-                document.getElementById('flash-submit-btn').textContent = 'زمان تمام شد ⏳';
+            words.forEach((word, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'word-btn';
+                btn.textContent = word;
+                btn.dataset.wordIndex = index;
+                btn.onclick = () => handleWordClick(btn, word);
+                wordBank.appendChild(btn);
+            });
+        }
+
+        function handleWordClick(button, word) {
+            // Move word from bank to answer area
+            wordBank.removeChild(button);
+            wordAnswerArea.appendChild(button);
+            button.onclick = () => handleAnswerClick(button, word);
+            
+            if (wordAnswerPlaceholder) wordAnswerPlaceholder.classList.add('hidden');
+            
+            // Check if there are any words left in the bank
+            if (wordBank.children.length === 0) {
+                wordPuzzleSubmitBtn.classList.remove('disabled');
+                wordPuzzleSubmitBtn.disabled = false;
             }
+        }
 
+        function handleAnswerClick(button, word) {
+            // Move word from answer area back to bank
+            wordAnswerArea.removeChild(button);
+            wordBank.appendChild(button);
+            button.onclick = () => handleWordClick(button, word);
+
+            // Check if any word remains in the answer area
+            if (wordAnswerArea.children.length === 0) {
+                wordAnswerPlaceholder.classList.remove('hidden');
+                wordPuzzleSubmitBtn.classList.add('disabled');
+                wordPuzzleSubmitBtn.disabled = true;
+            }
+        }
+
+        function getConstructedAnswer() {
+            const assembledWords = Array.from(wordAnswerArea.children).map(btn => btn.textContent).join('');
+            return assembledWords;
+        }
+
+        function checkWordPuzzleAnswer(correctAnswer) {
+            const finalAnswer = getConstructedAnswer();
+            checkAnswer(finalAnswer, correctAnswer);
+        }
+        // --- End Word Puzzle Logic ---
+
+        function checkAnswer(selectedAnswer, correctAnswer) {
+            stopTimer(); // Stop the timer immediately
+
+            const isCorrect = normalizeAnswer(selectedAnswer) === normalizeAnswer(correctAnswer);
 
             if (isCorrect) {
                 gameState.score += 10;
                 gameState.correctAnswers++;
+                // Simple visual feedback for correctness (Green flash)
+                document.getElementById('gameplay-screen').style.backgroundColor = '#1a331a';
             } else {
                 gameState.wrongAnswers++;
+                // Simple visual feedback for incorrectness (Red flash)
+                document.getElementById('gameplay-screen').style.backgroundColor = '#331a1a';
             }
             
-            document.getElementById('game-score').textContent = gameState.score;
-
-            // Move to the next riddle after a delay
+            // Reset background color after short delay
             setTimeout(() => {
-                // Reset flash button/input state for next question
-                if (gameState.currentMode === 'flash') {
-                    document.getElementById('flash-answer-input').classList.remove('border-green-400', 'bg-green-900/50', 'border-red-400', 'bg-red-900/50');
-                    document.getElementById('flash-answer-input').disabled = false;
-                    document.getElementById('flash-submit-btn').classList.remove('bg-green-600', 'bg-red-600');
-                    document.getElementById('flash-submit-btn').classList.add('btn-golden');
-                    document.getElementById('flash-submit-btn').textContent = 'ثبت پاسخ';
-                    document.getElementById('flash-submit-btn').disabled = false;
-                }
-
+                document.getElementById('gameplay-screen').style.backgroundColor = '#121212';
                 gameState.currentRiddleIndex++;
-                loadRiddle();
-            }, gameState.currentMode === 'old' ? 1500 : 3000); // Longer delay for flash to see the answer
+                updateGameUI();
+                nextRiddle();
+            }, 500);
         }
 
         function endLevel() {
-            const titleElement = document.getElementById('level-end-title');
-            const requiredCorrect = Math.ceil(RIDDLES_PER_LEVEL * 0.8); // 80% to pass
-
-            const passed = gameState.correctAnswers >= requiredCorrect;
-            const trophyAwarded = passed && gameState.currentMode === 'old' && !gameState.completedLevels.includes(gameState.currentLevel);
-
-            if (passed) {
-                titleElement.textContent = 'مرحله کامل شد! 🎉';
-                titleElement.classList.add('gold-gradient-text');
-                titleElement.classList.remove('text-red-400');
-                document.getElementById('next-level-btn').disabled = false;
-                
-                if (trophyAwarded) {
-                    gameState.trophies++;
-                    alertBox(`یک جام جدید کسب کردید! 🏆`, 'yellow');
-                }
-                
-                // Classic Mode Logic for Unlocking Next Level
-                if (gameState.currentMode === 'old') {
-                    gameState.completedLevels.push(gameState.currentLevel);
-                    if (gameState.currentLevel === gameState.unlockedLevel && gameState.unlockedLevel < TOTAL_LEVELS) {
-                        gameState.unlockedLevel++;
-                    }
-                }
-            } else {
-                titleElement.textContent = 'شکست خوردید 😔';
-                titleElement.classList.add('text-red-400');
-                titleElement.classList.remove('gold-gradient-text');
-                document.getElementById('next-level-btn').disabled = true;
-            }
-
             document.getElementById('correct-answers').textContent = gameState.correctAnswers;
             document.getElementById('wrong-answers').textContent = gameState.wrongAnswers;
 
-            document.getElementById('next-level-btn').onclick = () => {
-                if (gameState.currentMode === 'flash') {
-                    // In flash mode, hitting next level means restarting flash mode (since it's only one challenge)
-                    startGame(gameState.currentLevel, 'flash');
-                } else {
-                    // Classic mode
-                    startGame(gameState.currentLevel + 1, 'old');
+            let title;
+            if (gameState.correctAnswers >= RIDDLES_PER_LEVEL * 0.8) { // 80% correct
+                title = '🏆 موفقیت بزرگ!';
+                document.getElementById('level-end-title').className = 'text-4xl font-black gold-gradient-text';
+                
+                // Unlock next level if this was the highest unlocked one
+                if (!gameState.completedLevels.includes(gameState.currentLevel)) {
+                    gameState.completedLevels.push(gameState.currentLevel);
                 }
-            };
-            document.getElementById('retry-level-btn').onclick = () => startGame(gameState.currentLevel, gameState.currentMode);
-            document.getElementById('end-back-to-levels-btn').onclick = () => showScreen('levelSelection');
+                if (gameState.currentLevel === gameState.unlockedLevel && gameState.currentLevel < TOTAL_LEVELS) {
+                    gameState.unlockedLevel++;
+                }
+                document.getElementById('next-level-btn').classList.remove('disabled');
+                document.getElementById('next-level-btn').disabled = false;
 
+            } else {
+                title = '😐 تلاش کن!';
+                document.getElementById('level-end-title').className = 'text-4xl font-black text-gray-400';
+                document.getElementById('next-level-btn').classList.add('disabled');
+                document.getElementById('next-level-btn').disabled = true;
+            }
+            
+            document.getElementById('level-end-title').textContent = title;
             saveGameState();
-            updateUI(); // Update trophy count
             showScreen('levelEnd');
         }
 
-        // --- Initialization ---
-        window.onload = function() {
-            const hasSavedState = loadGameState();
-            if (hasSavedState && gameState.username) {
-                // If user is registered, skip splash and onboarding
-                setTimeout(() => {
-                    showScreen('mainMenu');
-                    updateUI();
-                    startFallingLetters();
-                }, 1000); // Brief pause on splash
-            } else {
-                // Show onboarding
-                setTimeout(() => {
-                    showScreen('onboarding');
-                    initOnboarding();
-                }, 1000); // Brief pause on splash
-            }
+        // --- Event Listeners for Game Flow ---
+        document.getElementById('retry-level-btn').addEventListener('click', () => {
+            startGame(gameState.currentLevel);
+        });
 
-            // Initialize general screen listeners
-            initMainMenu();
-            initLevelSelection();
-            initGameplay();
+        document.getElementById('next-level-btn').addEventListener('click', () => {
+            if (gameState.currentLevel < TOTAL_LEVELS) {
+                startGame(gameState.currentLevel + 1);
+            } else {
+                // If it was the last level, go back to selection
+                initLevelSelection();
+            }
+        });
+        
+        document.getElementById('end-back-to-levels-btn').addEventListener('click', initLevelSelection);
+        document.getElementById('back-to-levels-btn').addEventListener('click', initLevelSelection);
+
+        // --- Falling Letters Background Animation ---
+        const canvas = document.getElementById('falling-letters-canvas');
+        const ctx = canvas.getContext('2d');
+        let letters = [];
+        const letterSize = 14;
+        const letterColor = 'rgba(255, 215, 0, 0.4)'; // Gold color
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
+
+        function createLetter() {
+            letters.push({
+                x: Math.random() * canvas.width,
+                y: -letterSize,
+                text: ['آ', 'ا', 'ب', 'ت', 'ج', 'ح', 'خ', 'س', 'ش', 'ف', 'ق', 'م', 'ن', 'ه', 'و', 'ی'][Math.floor(Math.random() * 16)],
+                speed: 1 + Math.random() * 2,
+                opacity: 0.2 + Math.random() * 0.4,
+            });
+        }
+
+        function drawLetters() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = `${letterSize}px Vazirmatn`;
+            ctx.textAlign = 'center';
+
+            for (let i = 0; i < letters.length; i++) {
+                const letter = letters[i];
+                letter.y += letter.speed;
+                ctx.fillStyle = `rgba(255, 215, 0, ${letter.opacity})`;
+                ctx.fillText(letter.text, letter.x, letter.y);
+            }
+        }
+
+        function cleanLetters() {
+            letters = letters.filter(letter => letter.y < canvas.height);
+        }
+
+        function animateLetters() {
+            if (screens.mainMenu.style.display !== 'flex') return;
+            
+            requestAnimationFrame(animateLetters);
+            drawLetters();
+            cleanLetters();
+
+            if (Math.random() < 0.05) { // Spawn a new letter occasionally
+                createLetter();
+            }
+        }
+
+        function startFallingLetters() {
+            resizeCanvas();
+            letters = [];
+            for (let i = 0; i < 50; i++) {
+                createLetter(); // Initial burst
+            }
+            animateLetters();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        
+        // --- Initialization ---
+        window.onload = () => {
+            initOnboarding();
+            initSplash(); // Start the splash screen timer immediately
+        };
+
     </script>
 </body>
 </html>
